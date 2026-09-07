@@ -89,7 +89,8 @@ Before your **first** deploy:
 2. Make sure `composer.json`'s `config.platform.php` matches the server's PHP version.
 3. Copy `.env.example` to `.env` on the server, fill in real database credentials, and run
    `php artisan key:generate`.
-4. Point the `stoicrecovery.quinnix.com` subdomain's document root at `current/public`.
+4. Point the `stoic.quinnix.com` subdomain's document root at `~/stoicrecovery/current/public`
+   (this repurposes the subdomain previously used by the stoicsobriety practice app).
 
 Then deploy with:
 

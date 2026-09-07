@@ -15,7 +15,7 @@ add('writable_dirs', []);
 
 // Hosts
 
-host('stoicrecovery.quinnix.com')
+host('quinnix.com')
     ->setPort(2222)
     ->set('remote_user', 'quinni5')
     ->set('deploy_path', '~/stoicrecovery')
