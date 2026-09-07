@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $author_name
  * @property string|null $author_bio
  * @property string|null $author_photo_path
- * @property array<int, string>|null $excerpts
+ * @property array<int, array{quote: string, source: string}>|null $excerpts
  * @property array<string, string>|null $retailer_links
  * @property int|null $price
  * @property string $currency

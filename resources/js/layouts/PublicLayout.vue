@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { dashboard, login, register } from '@/routes';
+import { Moon, Sun } from '@lucide/vue';
+import { dashboard, login } from '@/routes';
 import { index as blogIndex } from '@/routes/blog';
+import { useAppearance } from '@/composables/useAppearance';
+
+const { resolvedAppearance, updateAppearance } = useAppearance();
+
+function toggleTheme() {
+    updateAppearance(resolvedAppearance.value === 'dark' ? 'light' : 'dark');
+}
 </script>
 
 <template>
@@ -13,68 +21,103 @@ import { index as blogIndex } from '@/routes/blog';
             crossorigin=""
         />
         <link
-            href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap"
             rel="stylesheet"
         />
     </Head>
 
     <div
-        class="min-h-screen bg-[#f6f1e9] text-[#1c1a16] antialiased dark:bg-[#15130f] dark:text-[#efe9dd]"
+        class="public-site min-h-screen bg-[var(--site-bg)] text-[var(--site-ink)] antialiased"
     >
         <header
-            class="mx-auto flex max-w-6xl items-center justify-between px-6 py-8 lg:px-10"
-        >
-            <Link href="/" class="font-serif-display text-lg tracking-tight"
-                >Stoic Recovery</Link
-            >
-            <nav class="flex items-center gap-6 text-sm">
-                <Link
-                    :href="blogIndex()"
-                    class="text-current/70 transition-colors hover:text-current"
-                    >Journal</Link
-                >
-                <Link
-                    v-if="$page.props.auth.user"
-                    :href="dashboard()"
-                    class="text-current/70 transition-colors hover:text-current"
-                >
-                    Dashboard
-                </Link>
-                <template v-else>
-                    <Link
-                        :href="login()"
-                        class="text-current/70 transition-colors hover:text-current"
-                        >Log in</Link
-                    >
-                    <Link
-                        :href="register()"
-                        class="border-b border-current/30 pb-0.5 transition-colors hover:border-current"
-                    >
-                        Register
-                    </Link>
-                </template>
-            </nav>
-        </header>
-
-        <slot />
-
-        <footer
-            class="mx-auto max-w-6xl border-t border-current/15 px-6 py-10 lg:px-10"
+            class="sticky top-0 z-40 border-b border-[var(--site-line)] bg-[var(--site-bg)]/90 backdrop-blur"
         >
             <div
-                class="flex flex-col items-start justify-between gap-4 text-sm text-current/50 sm:flex-row sm:items-center"
+                class="mx-auto flex max-w-4xl items-center justify-between px-7 py-[18px]"
             >
-                <span
-                    >&copy; {{ new Date().getFullYear() }} Stoic Recovery</span
+                <Link href="/" class="text-[17px] font-semibold tracking-tight"
+                    >Stoic Recovery</Link
                 >
-                <div class="flex gap-6">
-                    <Link :href="blogIndex()" class="hover:text-current"
-                        >Journal</Link
+
+                <nav class="flex items-center gap-4">
+                    <Link
+                        v-if="$page.props.auth.user"
+                        :href="dashboard()"
+                        class="text-sm text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
                     >
-                    <Link :href="login()" class="hover:text-current"
-                        >Log in</Link
+                        Dashboard
+                    </Link>
+                    <Link
+                        v-else
+                        :href="login()"
+                        class="text-sm text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
                     >
-                </div>
+                        Log in
+                    </Link>
+
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-full border border-[var(--site-line)] px-3.5 py-[7px] text-sm text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
+                        :aria-pressed="resolvedAppearance === 'dark'"
+                        @click="toggleTheme"
+                    >
+                        <Moon
+                            v-if="resolvedAppearance !== 'dark'"
+                            class="size-[15px]"
+                        />
+                        <Sun v-else class="size-[15px]" />
+                        <span>{{
+                            resolvedAppearance === 'dark'
+                                ? 'Light mode'
+                                : 'Dark mode'
+                        }}</span>
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <slot />
+        </main>
+
+        <footer class="py-11">
+            <div
+                class="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-[18px] px-7"
+            >
+                <ul
+                    class="flex list-none gap-[22px] p-0 text-sm text-[var(--site-ink-soft)]"
+                >
+                    <li>
+                        <Link href="/" class="hover:text-[var(--site-ink)]"
+                            >Home</Link
+                        >
+                    </li>
+                    <li>
+                        <Link
+                            href="/#about"
+                            class="hover:text-[var(--site-ink)]"
+                            >About</Link
+                        >
+                    </li>
+                    <li>
+                        <Link
+                            :href="blogIndex()"
+                            class="hover:text-[var(--site-ink)]"
+                            >Journal</Link
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="mailto:hello@stoicrecovery.com"
+                            class="hover:text-[var(--site-ink)]"
+                            >Contact</a
+                        >
+                    </li>
+                </ul>
+                <p class="text-[13px] text-[var(--site-ink-faint)]">
+                    &copy; {{ new Date().getFullYear() }} Stoic Recovery. All
+                    rights reserved.
+                </p>
             </div>
         </footer>
     </div>

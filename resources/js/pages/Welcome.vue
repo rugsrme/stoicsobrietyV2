@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { ArrowLeft, ArrowRight, Download } from '@lucide/vue';
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { Head } from '@inertiajs/vue3';
+import { Download } from '@lucide/vue';
+import { computed } from 'vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
-import { show as blogShow } from '@/routes/blog';
 import { sample as bookSample } from '@/routes/books';
-import type { Book, PostSummary } from '@/types';
+import type { Book } from '@/types';
 
 const props = defineProps<{
     book: Book | null;
-    recentPosts: PostSummary[];
 }>();
 
 const retailerLabels: Record<string, string> = {
@@ -31,90 +29,50 @@ const retailers = computed(() => {
         }));
 });
 
-const excerpts = computed(() => props.book?.excerpts ?? []);
-const excerptIndex = ref(0);
-let excerptTimer: ReturnType<typeof setInterval> | null = null;
-
-function nextExcerpt() {
-    if (excerpts.value.length === 0) return;
-    excerptIndex.value = (excerptIndex.value + 1) % excerpts.value.length;
-}
-
-function prevExcerpt() {
-    if (excerpts.value.length === 0) return;
-    excerptIndex.value =
-        (excerptIndex.value - 1 + excerpts.value.length) %
-        excerpts.value.length;
-}
-
-onMounted(() => {
-    if (excerpts.value.length > 1) {
-        excerptTimer = setInterval(nextExcerpt, 6000);
-    }
-});
-
-onBeforeUnmount(() => {
-    if (excerptTimer) clearInterval(excerptTimer);
-});
+const authorParagraphs = computed(() =>
+    (props.book?.author_bio ?? '').split('\n\n').filter(Boolean),
+);
 </script>
 
 <template>
-    <Head title="Stoic Recovery" />
+    <Head title="Stoic Recovery — The Architecture of Surrender" />
 
     <PublicLayout>
         <!-- Hero -->
-        <section class="mx-auto max-w-6xl px-6 pt-10 pb-24 lg:px-10 lg:pt-16">
-            <div class="grid gap-16 lg:grid-cols-[1.3fr_1fr] lg:items-end">
+        <section class="hero-stars relative overflow-hidden py-[76px] pb-16">
+            <div
+                class="relative mx-auto grid max-w-4xl grid-cols-1 items-center gap-14 px-7 lg:grid-cols-[1.15fr_0.85fr]"
+            >
                 <div>
                     <p
-                        class="mb-6 text-xs tracking-[0.3em] text-current/50 uppercase"
+                        class="mb-[18px] text-[15px] text-[var(--site-ink-faint)]"
                     >
-                        A new book from Stoic Recovery
+                        Stoic Recovery
                     </p>
                     <h1
-                        class="font-serif-display text-5xl leading-[1.05] font-medium tracking-tight sm:text-6xl lg:text-7xl"
+                        class="font-serif-display max-w-[15ch] text-[32px] leading-[1.18] font-medium sm:text-[40px] lg:text-[46px]"
                     >
-                        {{ book?.title ?? 'Architecture of Surrender' }}
+                        {{ book?.title ?? 'The Architecture of Surrender' }}
                     </h1>
                     <p
                         v-if="book?.subtitle"
-                        class="font-serif-display mt-5 max-w-xl text-xl text-current/70 italic"
+                        class="mt-3.5 max-w-[42ch] text-lg text-[var(--site-ink-soft)]"
                     >
                         {{ book.subtitle }}
                     </p>
-                    <p
-                        v-if="book?.description"
-                        class="mt-8 max-w-xl text-base leading-relaxed text-current/80"
+                    <a
+                        v-if="retailers[0]"
+                        :href="retailers[0].url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="mt-[30px] inline-block rounded bg-[var(--site-accent)] px-[26px] py-[13px] text-[15.5px] font-semibold text-[var(--site-accent-ink)] transition-transform hover:-translate-y-px"
                     >
-                        {{ book.description }}
-                    </p>
-
-                    <div
-                        class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4"
-                    >
-                        <a
-                            v-if="retailers[0]"
-                            :href="retailers[0].url"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="inline-flex items-center border border-current bg-current px-6 py-3 text-sm tracking-wide text-[#f6f1e9] uppercase transition-opacity hover:opacity-80 dark:text-[#15130f]"
-                        >
-                            Buy the book
-                        </a>
-                        <a
-                            v-if="book?.sample_path"
-                            :href="bookSample(book.slug).url"
-                            class="inline-flex items-center gap-2 text-sm text-current/70 transition-colors hover:text-current"
-                        >
-                            <Download class="size-4" />
-                            Download a sample
-                        </a>
-                    </div>
+                        Get the Book
+                    </a>
                 </div>
 
-                <!-- Book jacket -->
                 <div
-                    class="relative mx-auto aspect-[2/3] w-full max-w-[280px] border border-current/20 lg:mx-0 lg:ml-auto"
+                    class="relative z-[1] mx-auto aspect-[5/7.4] w-full max-w-[340px] overflow-hidden rounded-md border border-[var(--site-line)] bg-[var(--site-bg-raised)] shadow-[0_18px_44px_var(--site-shadow),0_0_60px_-12px_var(--site-glow)]"
                 >
                     <img
                         v-if="book?.cover_url"
@@ -127,13 +85,13 @@ onBeforeUnmount(() => {
                         class="flex h-full w-full flex-col items-center justify-center px-6 text-center"
                     >
                         <span
-                            class="text-xs tracking-[0.3em] text-current/40 uppercase"
+                            class="text-xs tracking-[0.3em] text-[var(--site-ink-faint)] uppercase"
                             >Stoic Recovery</span
                         >
                         <span
                             class="font-serif-display mt-4 text-2xl leading-tight font-medium"
                         >
-                            {{ book?.title ?? 'Architecture of Surrender' }}
+                            {{ book?.title ?? 'The Architecture of Surrender' }}
                         </span>
                     </div>
                 </div>
@@ -142,93 +100,88 @@ onBeforeUnmount(() => {
 
         <!-- Excerpts -->
         <section
-            v-if="excerpts.length"
-            class="mx-auto max-w-6xl border-t border-current/15 px-6 py-20 lg:px-10"
+            v-if="book?.excerpts?.length"
+            class="border-b border-[var(--site-line)] pt-2 pb-[68px]"
         >
-            <p class="mb-10 text-xs tracking-[0.3em] text-current/50 uppercase">
-                01 / From the book
-            </p>
-
             <div
-                class="grid gap-10 lg:grid-cols-[auto_1fr_auto] lg:items-center"
+                class="mx-auto mb-[22px] flex max-w-4xl items-baseline justify-between px-7"
             >
-                <button
-                    type="button"
-                    class="hidden text-current/40 transition-colors hover:text-current lg:block"
-                    aria-label="Previous excerpt"
-                    @click="prevExcerpt"
+                <h2 class="text-sm font-semibold text-[var(--site-ink-soft)]">
+                    From the book
+                </h2>
+                <span
+                    class="hidden text-[13px] text-[var(--site-ink-faint)] sm:inline"
+                    >Scroll to read more &rarr;</span
                 >
-                    <ArrowLeft class="size-6" />
-                </button>
-
-                <blockquote
-                    class="font-serif-display max-w-3xl text-2xl leading-snug font-medium italic sm:text-3xl"
-                >
-                    &ldquo;{{ excerpts[excerptIndex] }}&rdquo;
-                </blockquote>
-
-                <button
-                    type="button"
-                    class="hidden text-current/40 transition-colors hover:text-current lg:block"
-                    aria-label="Next excerpt"
-                    @click="nextExcerpt"
-                >
-                    <ArrowRight class="size-6" />
-                </button>
             </div>
 
-            <div class="mt-8 flex gap-2 lg:hidden">
-                <button
-                    v-for="(_, i) in excerpts"
+            <div
+                class="flex scrollbar-thin gap-[18px] overflow-x-auto px-7 pb-2"
+            >
+                <div
+                    v-for="(excerpt, i) in book.excerpts"
                     :key="i"
-                    type="button"
-                    class="h-px w-8 transition-colors"
-                    :class="i === excerptIndex ? 'bg-current' : 'bg-current/20'"
-                    :aria-label="`Go to excerpt ${i + 1}`"
-                    @click="excerptIndex = i"
-                />
+                    class="flex min-h-[210px] w-[min(78vw,340px)] shrink-0 flex-col justify-between rounded border border-[var(--site-line)] bg-[var(--site-card)] px-6 pt-[26px] pb-5"
+                >
+                    <p class="font-serif-display text-lg leading-normal">
+                        {{ excerpt.quote }}
+                    </p>
+                    <p class="text-[13px] text-[var(--site-ink-faint)]">
+                        {{ excerpt.source }}
+                    </p>
+                </div>
             </div>
         </section>
 
         <!-- About the author -->
         <section
             v-if="book?.author_name"
-            class="mx-auto max-w-6xl border-t border-current/15 px-6 py-20 lg:px-10"
+            id="about"
+            class="border-b border-[var(--site-line)] py-17"
         >
-            <p class="mb-10 text-xs tracking-[0.3em] text-current/50 uppercase">
-                02 / About the author
-            </p>
-
-            <div class="grid gap-10 lg:grid-cols-[auto_1fr] lg:items-start">
-                <div
-                    class="size-24 shrink-0 overflow-hidden rounded-full border border-current/20"
+            <div class="mx-auto max-w-4xl px-7">
+                <p
+                    class="mb-7 text-sm font-semibold text-[var(--site-ink-soft)]"
                 >
-                    <img
-                        v-if="book.author_photo_url"
-                        :src="book.author_photo_url"
-                        :alt="book.author_name"
-                        class="h-full w-full object-cover"
-                    />
-                    <div
-                        v-else
-                        class="flex h-full w-full items-center justify-center bg-current/5"
-                    >
-                        <span class="font-serif-display text-xl">{{
-                            book.author_name.charAt(0)
-                        }}</span>
-                    </div>
-                </div>
+                    About the Author
+                </p>
 
-                <div class="max-w-2xl">
-                    <h2 class="font-serif-display text-2xl font-medium">
-                        {{ book.author_name }}
-                    </h2>
-                    <p
-                        v-if="book.author_bio"
-                        class="mt-4 leading-relaxed text-current/80"
+                <div
+                    class="grid grid-cols-1 items-start gap-11 sm:grid-cols-[200px_1fr]"
+                >
+                    <div
+                        class="aspect-square overflow-hidden rounded border border-[var(--site-line)] bg-[var(--site-bg-raised)] sm:w-[200px]"
                     >
-                        {{ book.author_bio }}
-                    </p>
+                        <img
+                            v-if="book.author_photo_url"
+                            :src="book.author_photo_url"
+                            :alt="book.author_name"
+                            class="h-full w-full object-cover"
+                        />
+                        <div
+                            v-else
+                            class="flex h-full w-full items-center justify-center"
+                        >
+                            <span class="font-serif-display text-xl">{{
+                                book.author_name.charAt(0)
+                            }}</span>
+                        </div>
+                    </div>
+
+                    <div class="max-w-[660px]">
+                        <p
+                            v-for="(paragraph, i) in authorParagraphs"
+                            :key="i"
+                            class="mb-[18px]"
+                            :class="
+                                i === 0
+                                    ? 'text-lg text-[var(--site-ink)]'
+                                    : 'text-[var(--site-ink-soft)]'
+                            "
+                        >
+                            {{ paragraph }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -236,73 +189,125 @@ onBeforeUnmount(() => {
         <!-- Where to buy -->
         <section
             v-if="retailers.length"
-            class="mx-auto max-w-6xl border-t border-current/15 px-6 py-20 lg:px-10"
+            id="buy"
+            class="border-b border-[var(--site-line)] py-17"
         >
-            <p class="mb-10 text-xs tracking-[0.3em] text-current/50 uppercase">
-                03 / Where to buy
-            </p>
-
-            <div class="flex flex-wrap items-baseline gap-x-10 gap-y-4">
-                <a
-                    v-for="retailer in retailers"
-                    :key="retailer.key"
-                    :href="retailer.url"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="font-serif-display border-b border-current/30 pb-1 text-xl transition-colors hover:border-current"
+            <div class="mx-auto max-w-4xl px-7">
+                <p
+                    class="mb-7 text-sm font-semibold text-[var(--site-ink-soft)]"
                 >
-                    {{ retailer.label }}
-                </a>
+                    Where to Buy
+                </p>
+                <div class="flex flex-wrap gap-3.5">
+                    <a
+                        v-for="retailer in retailers"
+                        :key="retailer.key"
+                        :href="retailer.url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center rounded border border-[var(--site-line)] bg-[var(--site-card)] px-[22px] py-3.5 text-[15px] font-semibold transition-transform hover:-translate-y-px"
+                    >
+                        {{ retailer.label }}
+                    </a>
+                </div>
+                <p class="mt-4 text-[13.5px] text-[var(--site-ink-faint)]">
+                    Links are placeholders — swap in the real retailer URLs when
+                    the book goes live.
+                </p>
             </div>
-            <p
-                v-if="book?.price_formatted"
-                class="mt-6 text-sm text-current/50"
-            >
-                From {{ book.currency }} ${{ book.price_formatted }}, depending
-                on retailer and format.
-            </p>
+        </section>
+
+        <!-- Sample -->
+        <section class="border-b border-[var(--site-line)] py-17">
+            <div class="mx-auto max-w-4xl px-7">
+                <p
+                    class="mb-7 text-sm font-semibold text-[var(--site-ink-soft)]"
+                >
+                    Read Before You Buy
+                </p>
+                <div
+                    class="flex flex-wrap items-center justify-between gap-8 rounded border border-[var(--site-line)] bg-[var(--site-card)] px-9 py-[34px]"
+                >
+                    <div>
+                        <h3
+                            class="font-serif-display mb-2 text-[22px] font-medium"
+                        >
+                            Download a free sample
+                        </h3>
+                        <p class="max-w-[46ch] text-[var(--site-ink-soft)]">
+                            The opening chapter, free — three traditions, one
+                            door, and why they all lead to the same place.
+                        </p>
+                    </div>
+                    <a
+                        v-if="book?.sample_path"
+                        :href="bookSample(book.slug).url"
+                        class="inline-flex items-center gap-2 rounded border border-[var(--site-ink)] px-[22px] py-3 text-[15px] font-semibold whitespace-nowrap transition-colors hover:bg-[var(--site-ink)] hover:text-[var(--site-bg)]"
+                    >
+                        <Download class="size-4" />
+                        Download Sample PDF
+                    </a>
+                    <span
+                        v-else
+                        class="text-sm text-[var(--site-ink-faint)] italic"
+                        >Coming soon</span
+                    >
+                </div>
+            </div>
         </section>
 
         <!-- Reviews -->
-        <section
-            class="mx-auto max-w-6xl border-t border-current/15 px-6 py-20 lg:px-10"
-        >
-            <p class="mb-10 text-xs tracking-[0.3em] text-current/50 uppercase">
-                04 / Reviews
-            </p>
-            <p
-                class="font-serif-display max-w-2xl text-xl text-current/60 italic"
-            >
-                Early reviews are on their way. Check back soon.
-            </p>
-        </section>
-
-        <!-- Journal teaser -->
-        <section
-            v-if="recentPosts.length"
-            class="mx-auto max-w-6xl border-t border-current/15 px-6 py-20 lg:px-10"
-        >
-            <p class="mb-10 text-xs tracking-[0.3em] text-current/50 uppercase">
-                05 / From the journal
-            </p>
-
-            <div class="grid gap-10 sm:grid-cols-3">
-                <Link
-                    v-for="post in recentPosts"
-                    :key="post.id"
-                    :href="blogShow(post.slug)"
-                    class="group"
+        <section class="py-17">
+            <div class="mx-auto max-w-4xl px-7">
+                <p
+                    class="mb-7 text-sm font-semibold text-[var(--site-ink-soft)]"
                 >
-                    <h3
-                        class="font-serif-display text-lg font-medium transition-colors group-hover:text-current/70"
+                    Reviews &amp; Testimonials
+                </p>
+                <div class="grid grid-cols-1 gap-[18px] sm:grid-cols-3">
+                    <div
+                        v-for="i in 3"
+                        :key="i"
+                        class="flex min-h-[140px] items-center justify-center rounded border border-dashed border-[var(--site-line)] px-[22px] py-[26px] text-center text-sm text-[var(--site-ink-faint)]"
                     >
-                        {{ post.title }}
-                    </h3>
-                    <p v-if="post.excerpt" class="mt-2 text-sm text-current/60">
-                        {{ post.excerpt }}
-                    </p>
-                </Link>
+                        Reader review coming soon
+                    </div>
+                </div>
+                <p class="mt-[18px] text-[13.5px] text-[var(--site-ink-faint)]">
+                    Early reader and reviewer quotes will appear here as they
+                    come in.
+                </p>
             </div>
         </section>
     </PublicLayout>
 </template>
+
+<style scoped>
+.hero-stars {
+    background-image:
+        radial-gradient(
+            ellipse 640px 420px at 18% 8%,
+            var(--site-glow),
+            transparent 70%
+        ),
+        radial-gradient(1.6px 1.6px at 12% 22%, var(--site-star), transparent),
+        radial-gradient(1.4px 1.4px at 27% 12%, var(--site-star), transparent),
+        radial-gradient(1.8px 1.8px at 41% 30%, var(--site-star), transparent),
+        radial-gradient(1.2px 1.2px at 58% 9%, var(--site-star), transparent),
+        radial-gradient(1.6px 1.6px at 71% 24%, var(--site-star), transparent),
+        radial-gradient(1.3px 1.3px at 85% 14%, var(--site-star), transparent),
+        radial-gradient(1.5px 1.5px at 92% 34%, var(--site-star), transparent),
+        radial-gradient(1.2px 1.2px at 6% 42%, var(--site-star), transparent),
+        radial-gradient(1.4px 1.4px at 64% 40%, var(--site-star), transparent);
+    background-repeat: no-repeat;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+    height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--site-line);
+    border-radius: 4px;
+}
+</style>

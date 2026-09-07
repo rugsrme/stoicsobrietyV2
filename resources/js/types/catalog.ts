@@ -1,3 +1,8 @@
+export type BookExcerpt = {
+    quote: string;
+    source: string;
+};
+
 export type Book = {
     id: number;
     title: string;
@@ -9,7 +14,7 @@ export type Book = {
     author_name: string | null;
     author_bio: string | null;
     author_photo_url: string | null;
-    excerpts: string[] | null;
+    excerpts: BookExcerpt[] | null;
     retailer_links: Record<string, string> | null;
     price: number | null;
     price_formatted: string | null;

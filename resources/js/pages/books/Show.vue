@@ -28,14 +28,20 @@ const retailers = computed(() => {
             url: url as string,
         }));
 });
+
+const authorParagraphs = computed(() =>
+    (props.book.author_bio ?? '').split('\n\n').filter(Boolean),
+);
 </script>
 
 <template>
     <Head :title="book.title" />
 
     <PublicLayout>
-        <section class="mx-auto max-w-6xl px-6 pt-10 pb-24 lg:px-10 lg:pt-16">
-            <div class="grid gap-16 lg:grid-cols-[1.3fr_1fr] lg:items-start">
+        <section class="mx-auto max-w-4xl px-7 pt-10 pb-16">
+            <div
+                class="grid grid-cols-1 items-start gap-14 lg:grid-cols-[1.3fr_1fr]"
+            >
                 <div>
                     <h1
                         class="font-serif-display text-4xl leading-[1.05] font-medium tracking-tight sm:text-5xl"
@@ -44,27 +50,25 @@ const retailers = computed(() => {
                     </h1>
                     <p
                         v-if="book.subtitle"
-                        class="font-serif-display mt-4 max-w-xl text-lg text-current/70 italic"
+                        class="mt-4 max-w-xl text-lg text-[var(--site-ink-soft)]"
                     >
                         {{ book.subtitle }}
                     </p>
                     <p
                         v-if="book.description"
-                        class="mt-8 max-w-xl leading-relaxed text-current/80"
+                        class="mt-8 max-w-xl leading-relaxed text-[var(--site-ink-soft)]"
                     >
                         {{ book.description }}
                     </p>
 
-                    <div
-                        class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4"
-                    >
+                    <div class="mt-8 flex flex-wrap gap-3.5">
                         <a
                             v-for="retailer in retailers"
                             :key="retailer.key"
                             :href="retailer.url"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="font-serif-display border-b border-current/30 pb-1 text-lg transition-colors hover:border-current"
+                            class="inline-flex items-center rounded border border-[var(--site-line)] bg-[var(--site-card)] px-5 py-3 text-[15px] font-semibold transition-transform hover:-translate-y-px"
                         >
                             {{ retailer.label }}
                         </a>
@@ -73,7 +77,7 @@ const retailers = computed(() => {
                     <a
                         v-if="book.sample_path"
                         :href="bookSample(book.slug).url"
-                        class="mt-8 inline-flex items-center gap-2 text-sm text-current/70 transition-colors hover:text-current"
+                        class="mt-6 inline-flex items-center gap-2 text-sm text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
                     >
                         <Download class="size-4" />
                         Download a sample
@@ -81,7 +85,7 @@ const retailers = computed(() => {
                 </div>
 
                 <div
-                    class="relative mx-auto aspect-[2/3] w-full max-w-[280px] border border-current/20 lg:mx-0 lg:ml-auto"
+                    class="relative mx-auto aspect-[5/7.4] w-full max-w-[280px] overflow-hidden rounded-md border border-[var(--site-line)] bg-[var(--site-bg-raised)] shadow-[0_18px_44px_var(--site-shadow)] lg:mx-0 lg:ml-auto"
                 >
                     <img
                         v-if="book.cover_url"
@@ -102,28 +106,37 @@ const retailers = computed(() => {
 
             <div
                 v-if="book.excerpts?.length"
-                class="mt-20 border-t border-current/15 pt-16"
+                class="mt-16 border-t border-[var(--site-line)] pt-14"
             >
                 <p
-                    class="mb-10 text-xs tracking-[0.3em] text-current/50 uppercase"
+                    class="mb-7 text-sm font-semibold text-[var(--site-ink-soft)]"
                 >
                     From the book
                 </p>
-                <blockquote
-                    v-for="(excerpt, i) in book.excerpts"
-                    :key="i"
-                    class="font-serif-display mb-8 max-w-3xl text-2xl leading-snug font-medium italic"
-                >
-                    &ldquo;{{ excerpt }}&rdquo;
-                </blockquote>
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <div
+                        v-for="(excerpt, i) in book.excerpts"
+                        :key="i"
+                        class="rounded border border-[var(--site-line)] bg-[var(--site-card)] px-6 py-6"
+                    >
+                        <p class="font-serif-display text-lg leading-normal">
+                            {{ excerpt.quote }}
+                        </p>
+                        <p
+                            class="mt-4 text-[13px] text-[var(--site-ink-faint)]"
+                        >
+                            {{ excerpt.source }}
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <div
                 v-if="book.author_name"
-                class="mt-20 border-t border-current/15 pt-16"
+                class="mt-16 border-t border-[var(--site-line)] pt-14"
             >
                 <p
-                    class="mb-10 text-xs tracking-[0.3em] text-current/50 uppercase"
+                    class="mb-7 text-sm font-semibold text-[var(--site-ink-soft)]"
                 >
                     About the author
                 </p>
@@ -131,10 +144,11 @@ const retailers = computed(() => {
                     {{ book.author_name }}
                 </h2>
                 <p
-                    v-if="book.author_bio"
-                    class="mt-4 max-w-2xl leading-relaxed text-current/80"
+                    v-for="(paragraph, i) in authorParagraphs"
+                    :key="i"
+                    class="mt-4 max-w-2xl leading-relaxed text-[var(--site-ink-soft)]"
                 >
-                    {{ book.author_bio }}
+                    {{ paragraph }}
                 </p>
             </div>
         </section>

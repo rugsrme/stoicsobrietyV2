@@ -89,8 +89,44 @@
     }
 
     .font-serif-display {
-        font-family: 'Fraunces', ui-serif, Georgia, serif;
+        font-family: 'Source Serif 4', Georgia, 'Iowan Old Style', serif;
     }
+}
+
+/*
+  Color system and type for the public marketing site (landing page, blog,
+  book catalog) — scoped separately from the authenticated app's shadcn
+  tokens above so the two can evolve independently.
+*/
+.public-site {
+    --site-bg: #f0eff6;
+    --site-bg-raised: #e6e4f1;
+    --site-ink: #1e1f2e;
+    --site-ink-soft: #4e5069;
+    --site-ink-faint: #8a8ca6;
+    --site-accent: #4c57c4;
+    --site-accent-ink: #ffffff;
+    --site-line: #d9d6e8;
+    --site-card: #faf9ff;
+    --site-shadow: rgba(30, 31, 46, 0.08);
+    --site-glow: rgba(76, 87, 196, 0.14);
+    --site-star: rgba(30, 31, 46, 0.14);
+    font-family: Calibri, 'Segoe UI', Arial, sans-serif;
+}
+
+.dark .public-site {
+    --site-bg: #0b0c14;
+    --site-bg-raised: #12131f;
+    --site-ink: #e7e8f3;
+    --site-ink-soft: #a7a9c4;
+    --site-ink-faint: #676a8a;
+    --site-accent: #8b97f5;
+    --site-accent-ink: #10111c;
+    --site-line: #23243a;
+    --site-card: #12131f;
+    --site-shadow: rgba(0, 0, 0, 0.45);
+    --site-glow: rgba(139, 151, 245, 0.2);
+    --site-star: rgba(231, 232, 243, 0.55);
 }
 
 :root {
