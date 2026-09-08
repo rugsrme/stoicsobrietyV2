@@ -21,16 +21,14 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { computed } from 'vue';
 import { dashboard, home } from '@/routes';
 import { index as adminPostsIndex } from '@/routes/admin/posts';
 import { chapter as chapterRoute, full as fullRoute } from '@/routes/library';
 import type { NavItem } from '@/types';
 
 const page = usePage();
-const isAdmin = computed(() => Boolean(page.props.auth.user?.is_admin));
 
-const mainNavItems = computed<NavItem[]>(() => [
+const mainNavItems: NavItem[] = [
     {
         title: 'Subscribers Area',
         href: dashboard(),
@@ -41,16 +39,12 @@ const mainNavItems = computed<NavItem[]>(() => [
         href: fullRoute(),
         icon: BookOpen,
     },
-    ...(isAdmin.value
-        ? [
-              {
-                  title: 'Posts',
-                  href: adminPostsIndex(),
-                  icon: Newspaper,
-              },
-          ]
-        : []),
-]);
+    {
+        title: 'Posts',
+        href: adminPostsIndex(),
+        icon: Newspaper,
+    },
+];
 
 const chapterNavItems = [
     { slug: 'front-matter', number: null as number | null, title: 'About This Book' },

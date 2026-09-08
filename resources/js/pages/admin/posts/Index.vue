@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Form, Head, Link, router } from '@inertiajs/vue3';
+import { Form, Head, Link, router, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import PostController from '@/actions/App/Http/Controllers/Admin/PostController';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,9 @@ import type { Post } from '@/types';
 defineProps<{
     posts: Pick<Post, 'id' | 'title' | 'slug' | 'published_at'>[];
 }>();
+
+const page = usePage();
+const isAdmin = computed(() => Boolean(page.props.auth.user?.is_admin));
 
 defineOptions({
     layout: {
@@ -37,7 +41,7 @@ function openPost(post: Pick<Post, 'slug' | 'published_at'>) {
                 title="Posts"
                 description="Write and publish journal entries"
             />
-            <Button as-child>
+            <Button v-if="isAdmin" as-child>
                 <Link :href="create()">New post</Link>
             </Button>
         </div>
@@ -63,7 +67,7 @@ function openPost(post: Pick<Post, 'slug' | 'published_at'>) {
                         {{ post.published_at ? 'Published' : 'Draft' }}
                     </p>
                 </div>
-                <div class="flex items-center gap-2" @click.stop>
+                <div v-if="isAdmin" class="flex items-center gap-2" @click.stop>
                     <Button as-child variant="secondary" size="sm">
                         <Link :href="edit(post.id)">Edit</Link>
                     </Button>

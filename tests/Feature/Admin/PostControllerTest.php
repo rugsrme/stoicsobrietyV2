@@ -9,12 +9,36 @@ test('guests cannot access the admin posts area', function () {
     $response->assertRedirect(route('login'));
 });
 
-test('non-admin authenticated users cannot access the admin posts area', function () {
+test('non-admin authenticated users can view the posts list', function () {
     $user = User::factory()->create();
+    Post::factory()->create();
 
     $response = $this->actingAs($user)->get(route('admin.posts.index'));
 
-    $response->assertForbidden();
+    $response->assertOk();
+});
+
+test('non-admin authenticated users cannot create, update, or delete posts', function () {
+    $user = User::factory()->create();
+    $post = Post::factory()->create();
+
+    $this->actingAs($user)->get(route('admin.posts.create'))->assertForbidden();
+
+    $this->actingAs($user)->post(route('admin.posts.store'), [
+        'title' => 'Nope',
+        'slug' => 'nope',
+        'body' => 'Nope',
+        'published' => false,
+    ])->assertForbidden();
+
+    $this->actingAs($user)->put(route('admin.posts.update', $post), [
+        'title' => 'Nope',
+        'slug' => $post->slug,
+        'body' => 'Nope',
+        'published' => false,
+    ])->assertForbidden();
+
+    $this->actingAs($user)->delete(route('admin.posts.destroy', $post))->assertForbidden();
 });
 
 test('admins can list posts', function () {

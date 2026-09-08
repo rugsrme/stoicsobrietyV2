@@ -25,8 +25,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('chapters/{chapter}', [LibraryController::class, 'chapter'])->name('chapter');
     });
 
-    Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
-        Route::resource('posts', AdminPostController::class)->except(['show']);
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('posts', [AdminPostController::class, 'index'])->name('posts.index');
+
+        Route::middleware('admin')->group(function () {
+            Route::get('posts/create', [AdminPostController::class, 'create'])->name('posts.create');
+            Route::post('posts', [AdminPostController::class, 'store'])->name('posts.store');
+            Route::get('posts/{post}/edit', [AdminPostController::class, 'edit'])->name('posts.edit');
+            Route::put('posts/{post}', [AdminPostController::class, 'update'])->name('posts.update');
+            Route::delete('posts/{post}', [AdminPostController::class, 'destroy'])->name('posts.destroy');
+        });
     });
 });
 
