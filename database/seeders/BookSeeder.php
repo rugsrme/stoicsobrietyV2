@@ -34,6 +34,12 @@ class BookSeeder extends Seeder
             [
                 'title' => 'The Architecture of Surrender',
                 'subtitle' => 'How a Rabbi, an Emperor, and a Roomful of Drunks Found the Same Way Out — three traditions, one way through.',
+                'description' => implode("\n\n", [
+                    'A rabbi teaching on a hillside. A Roman emperor writing to himself by candlelight. Two drunks talking in a hotel lobby. Two thousand years apart, no contact between them — and somehow, the same answer.',
+                    'Written by a man who got sober at fifty after thirty years of drinking, this book traces one idea across three unlikely sources: the wisdom of the Twelve Steps, the honesty of Scripture, and the clarity of Stoic philosophy. It\'s not a memoir, and it\'s not a program. It\'s an argument — built quietly, chapter by chapter — that real peace was never about winning the fight for good. It was about finally understanding what was yours to fight in the first place.',
+                    'For the person still white-knuckling their way through recovery, one day at a time as agony instead of philosophy, this book offers a way further in. For the family member trying to understand what\'s actually happening inside someone they love, it offers a window instead of a wall. And for the sponsor, the pastor, the counselor — anyone who\'s spent years helping others find the words for something wordless — it offers a shared language, drawn from traditions that already speak fluently to the people they serve.',
+                    'No judgment. No finish line promised. Just the same door, found three different ways, standing open.',
+                ]),
                 'cover_path' => $coverPath,
                 'back_cover_path' => $backCoverPath,
                 'author_name' => 'Quinn Stewart',

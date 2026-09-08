@@ -32,6 +32,10 @@ const retailers = computed(() => {
 const authorParagraphs = computed(() =>
     (props.book.author_bio ?? '').split('\n\n').filter(Boolean),
 );
+
+const descriptionParagraphs = computed(() =>
+    (props.book.description ?? '').split('\n\n').filter(Boolean),
+);
 </script>
 
 <template>
@@ -47,7 +51,7 @@ const authorParagraphs = computed(() =>
             </Link>
 
             <div
-                class="grid grid-cols-1 items-start gap-14 lg:grid-cols-[1.3fr_1fr]"
+                class="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1.3fr_1fr]"
             >
                 <div>
                     <h1
@@ -61,13 +65,6 @@ const authorParagraphs = computed(() =>
                     >
                         {{ book.subtitle }}
                     </p>
-                    <p
-                        v-if="book.description"
-                        class="mt-8 max-w-xl leading-relaxed text-[var(--site-ink-soft)]"
-                    >
-                        {{ book.description }}
-                    </p>
-
                     <div class="mt-8 flex flex-wrap gap-3.5">
                         <a
                             v-for="retailer in retailers"
@@ -92,7 +89,7 @@ const authorParagraphs = computed(() =>
                 </div>
 
                 <div
-                    class="relative mx-auto aspect-[5/7.4] w-full max-w-[280px] overflow-hidden rounded-md border border-[var(--site-line)] bg-[var(--site-bg-raised)] shadow-[0_18px_44px_var(--site-shadow)] lg:mx-0 lg:ml-auto"
+                    class="relative mx-auto aspect-[5/7.4] w-full max-w-[340px] overflow-hidden rounded-md border border-[var(--site-line)] bg-[var(--site-bg-raised)] shadow-[0_18px_44px_var(--site-shadow)] lg:mx-0 lg:ml-auto"
                 >
                     <img
                         v-if="book.cover_url"
@@ -114,15 +111,20 @@ const authorParagraphs = computed(() =>
             <!-- Back cover -->
             <div
                 v-if="book.back_cover_url"
-                class="mt-14 flex flex-col items-center border-t border-[var(--site-line)] pt-14"
+                class="mt-16 grid grid-cols-1 items-start gap-6 border-t border-[var(--site-line)] pt-14 lg:grid-cols-2"
             >
-                <p
-                    class="mb-5 text-sm font-semibold text-[var(--site-ink-soft)]"
-                >
-                    Back cover
-                </p>
+                <div class="lg:pl-6">
+                    <p
+                        v-for="(paragraph, i) in descriptionParagraphs"
+                        :key="i"
+                        class="mt-3 text-[15px] leading-relaxed text-[var(--site-ink-soft)] first:mt-0"
+                    >
+                        {{ paragraph }}
+                    </p>
+                </div>
+
                 <div
-                    class="aspect-[5/7.4] w-full max-w-[280px] overflow-hidden rounded-md border border-[var(--site-line)] bg-[var(--site-bg-raised)] shadow-[0_18px_44px_var(--site-shadow)]"
+                    class="relative mx-auto aspect-[5/7.4] w-full max-w-[340px] overflow-hidden rounded-md border border-[var(--site-line)] bg-[var(--site-bg-raised)] shadow-[0_18px_44px_var(--site-shadow)] lg:mx-0 lg:ml-auto"
                 >
                     <img
                         :src="book.back_cover_url"
