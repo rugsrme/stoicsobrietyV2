@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { Download } from '@lucide/vue';
 import { computed } from 'vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
@@ -39,6 +39,13 @@ const authorParagraphs = computed(() =>
 
     <PublicLayout>
         <section class="mx-auto max-w-4xl px-7 pt-10 pb-16">
+            <Link
+                href="/"
+                class="mb-8 inline-flex items-center text-sm text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
+            >
+                &larr; Back to home
+            </Link>
+
             <div
                 class="grid grid-cols-1 items-start gap-14 lg:grid-cols-[1.3fr_1fr]"
             >

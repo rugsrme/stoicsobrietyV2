@@ -21,6 +21,21 @@ host('quinnix.com')
     ->set('deploy_path', '~/stoicrecovery')
     ->setIdentityFile('/home/quinn/.ssh/quinnix_deploy');
 
+// Tasks
+
+task('artisan:db:seed:books', artisan('db:seed --class=BookSeeder --force', ['skipIfNoEnv', 'showOutput']));
+
+task('deploy', [
+    'deploy:prepare',
+    'deploy:vendors',
+    'artisan:storage:link',
+    'artisan:optimize',
+    'artisan:migrate',
+    'artisan:db:seed:books',
+    'deploy:publish',
+    'artisan:reload',
+]);
+
 // Hooks
 
 after('deploy:failed', 'deploy:unlock');

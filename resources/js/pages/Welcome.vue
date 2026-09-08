@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { Download } from '@lucide/vue';
 import { computed } from 'vue';
+import ExcerptTicker from '@/components/ExcerptTicker.vue';
 import TestimonialCarousel from '@/components/TestimonialCarousel.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
-import { sample as bookSample } from '@/routes/books';
+import { sample as bookSample, show as bookShow } from '@/routes/books';
 import type { Book } from '@/types';
 
 const props = defineProps<{
@@ -48,8 +49,12 @@ const authorParagraphs = computed(() =>
                     <p
                         class="mb-[18px] text-[15px] text-[var(--site-ink-faint)]"
                     >
-                        Stoic Recovery
                     </p>
+                    <ExcerptTicker
+                        v-if="book?.excerpts?.length"
+                        :excerpts="book.excerpts"
+                        class="mb-[18px] max-w-[42ch]"
+                    />
                     <h1
                         class="font-serif-display max-w-[15ch] text-[32px] leading-[1.18] font-medium sm:text-[40px] lg:text-[46px]"
                     >
@@ -61,15 +66,24 @@ const authorParagraphs = computed(() =>
                     >
                         {{ book.subtitle }}
                     </p>
-                    <a
-                        v-if="retailers[0]"
-                        :href="retailers[0].url"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="mt-[30px] inline-block rounded bg-[var(--site-accent)] px-[26px] py-[13px] text-[15.5px] font-semibold text-[var(--site-accent-ink)] transition-transform hover:-translate-y-px"
-                    >
-                        Get the Book
-                    </a>
+                    <div class="mt-[30px] flex flex-wrap items-center gap-5">
+                        <a
+                            v-if="retailers[0]"
+                            :href="retailers[0].url"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-block rounded bg-[var(--site-accent)] px-[26px] py-[13px] text-[15.5px] font-semibold text-[var(--site-accent-ink)] transition-transform hover:-translate-y-px"
+                        >
+                            Get the Book
+                        </a>
+                        <Link
+                            v-if="book?.slug"
+                            :href="bookShow(book.slug).url"
+                            class="text-[15px] font-semibold text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
+                        >
+                            View book details &rarr;
+                        </Link>
+                    </div>
                 </div>
 
                 <div
@@ -95,41 +109,6 @@ const authorParagraphs = computed(() =>
                             {{ book?.title ?? 'The Architecture of Surrender' }}
                         </span>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Excerpts -->
-        <section
-            v-if="book?.excerpts?.length"
-            class="border-b border-[var(--site-line)] pt-2 pb-[68px]"
-        >
-            <div
-                class="mx-auto mb-[22px] flex max-w-4xl items-baseline justify-between px-7"
-            >
-                <h2 class="text-sm font-semibold text-[var(--site-ink-soft)]">
-                    From the book
-                </h2>
-                <span
-                    class="hidden text-[13px] text-[var(--site-ink-faint)] sm:inline"
-                    >Scroll to read more &rarr;</span
-                >
-            </div>
-
-            <div
-                class="flex scrollbar-thin gap-[18px] overflow-x-auto px-7 pb-2"
-            >
-                <div
-                    v-for="(excerpt, i) in book.excerpts"
-                    :key="i"
-                    class="flex min-h-[210px] w-[min(78vw,340px)] shrink-0 flex-col justify-between rounded border border-[var(--site-line)] bg-[var(--site-card)] px-6 pt-[26px] pb-5"
-                >
-                    <p class="font-serif-display text-lg leading-normal">
-                        {{ excerpt.quote }}
-                    </p>
-                    <p class="text-[13px] text-[var(--site-ink-faint)]">
-                        {{ excerpt.source }}
-                    </p>
                 </div>
             </div>
         </section>
@@ -211,10 +190,6 @@ const authorParagraphs = computed(() =>
                         {{ retailer.label }}
                     </a>
                 </div>
-                <p class="mt-4 text-[13.5px] text-[var(--site-ink-faint)]">
-                    Links are placeholders — swap in the real retailer URLs when
-                    the book goes live.
-                </p>
             </div>
         </section>
 
@@ -276,11 +251,6 @@ const authorParagraphs = computed(() =>
                 >
                     Reader review coming soon
                 </div>
-
-                <p class="mt-[18px] text-[13.5px] text-[var(--site-ink-faint)]">
-                    Early reader and reviewer quotes will appear here as they
-                    come in.
-                </p>
             </div>
         </section>
     </PublicLayout>
@@ -304,14 +274,5 @@ const authorParagraphs = computed(() =>
         radial-gradient(1.2px 1.2px at 6% 42%, var(--site-star), transparent),
         radial-gradient(1.4px 1.4px at 64% 40%, var(--site-star), transparent);
     background-repeat: no-repeat;
-}
-
-.scrollbar-thin::-webkit-scrollbar {
-    height: 6px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-    background: var(--site-line);
-    border-radius: 4px;
 }
 </style>
