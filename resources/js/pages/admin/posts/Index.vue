@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { Form, Head, Link } from '@inertiajs/vue3';
+import { Form, Head, Link, router } from '@inertiajs/vue3';
 import PostController from '@/actions/App/Http/Controllers/Admin/PostController';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { create, edit, index } from '@/routes/admin/posts';
+import { show as blogShow } from '@/routes/blog';
 import type { Post } from '@/types';
 
 defineProps<{
@@ -15,6 +16,16 @@ defineOptions({
         breadcrumbs: [{ title: 'Posts', href: index() }],
     },
 });
+
+function isPublished(publishedAt: string | null): boolean {
+    return publishedAt !== null && new Date(publishedAt) <= new Date();
+}
+
+function openPost(post: Pick<Post, 'slug' | 'published_at'>) {
+    if (isPublished(post.published_at)) {
+        router.visit(blogShow(post.slug));
+    }
+}
 </script>
 
 <template>
@@ -38,7 +49,13 @@ defineOptions({
             <div
                 v-for="post in posts"
                 :key="post.id"
-                class="flex items-center justify-between gap-4 px-4 py-3"
+                class="flex items-center justify-between gap-4 px-4 py-3 transition-colors"
+                :class="
+                    isPublished(post.published_at)
+                        ? 'cursor-pointer hover:bg-accent'
+                        : ''
+                "
+                @click="openPost(post)"
             >
                 <div>
                     <p class="font-medium">{{ post.title }}</p>
@@ -46,7 +63,7 @@ defineOptions({
                         {{ post.published_at ? 'Published' : 'Draft' }}
                     </p>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2" @click.stop>
                     <Button as-child variant="secondary" size="sm">
                         <Link :href="edit(post.id)">Edit</Link>
                     </Button>

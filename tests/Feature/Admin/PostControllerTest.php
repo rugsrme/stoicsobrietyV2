@@ -9,8 +9,16 @@ test('guests cannot access the admin posts area', function () {
     $response->assertRedirect(route('login'));
 });
 
-test('authenticated users can list posts', function () {
+test('non-admin authenticated users cannot access the admin posts area', function () {
     $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->get(route('admin.posts.index'));
+
+    $response->assertForbidden();
+});
+
+test('admins can list posts', function () {
+    $user = User::factory()->admin()->create();
     Post::factory()->create();
 
     $response = $this->actingAs($user)->get(route('admin.posts.index'));
@@ -19,7 +27,7 @@ test('authenticated users can list posts', function () {
 });
 
 test('a post can be created as a draft', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
 
     $response = $this->actingAs($user)->post(route('admin.posts.store'), [
         'title' => 'A New Post',
@@ -38,7 +46,7 @@ test('a post can be created as a draft', function () {
 });
 
 test('a post can be created published', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
 
     $this->actingAs($user)->post(route('admin.posts.store'), [
         'title' => 'A Published Post',
@@ -53,7 +61,7 @@ test('a post can be created published', function () {
 });
 
 test('a post slug must be unique', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     Post::factory()->create(['slug' => 'taken']);
 
     $response = $this->actingAs($user)->post(route('admin.posts.store'), [
@@ -67,7 +75,7 @@ test('a post slug must be unique', function () {
 });
 
 test('a post can be updated and published', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $post = Post::factory()->create(['published_at' => null]);
 
     $response = $this->actingAs($user)->put(route('admin.posts.update', $post), [
@@ -86,7 +94,7 @@ test('a post can be updated and published', function () {
 });
 
 test('a post can be unpublished', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $post = Post::factory()->create(['published_at' => now()]);
 
     $this->actingAs($user)->put(route('admin.posts.update', $post), [
@@ -100,7 +108,7 @@ test('a post can be unpublished', function () {
 });
 
 test('a post can be deleted', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $post = Post::factory()->create();
 
     $response = $this->actingAs($user)->delete(route('admin.posts.destroy', $post));

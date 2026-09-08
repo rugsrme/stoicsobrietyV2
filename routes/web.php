@@ -3,7 +3,9 @@
 use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LibraryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -16,9 +18,14 @@ Route::get('blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('library')->name('library.')->group(function () {
+        Route::get('full', [LibraryController::class, 'full'])->name('full');
+        Route::get('chapters/{chapter}', [LibraryController::class, 'chapter'])->name('chapter');
+    });
+
+    Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::resource('posts', AdminPostController::class)->except(['show']);
     });
 });

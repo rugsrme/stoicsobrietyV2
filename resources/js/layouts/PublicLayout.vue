@@ -45,7 +45,7 @@ function toggleTheme() {
                         :href="dashboard()"
                         class="text-sm text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
                     >
-                        Dashboard
+                        Subscribers Area
                     </Link>
                     <Link
                         v-else

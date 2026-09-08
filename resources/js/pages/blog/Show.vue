@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import PublicLayout from '@/layouts/PublicLayout.vue';
+import { index as blogIndex } from '@/routes/blog';
 import type { Post } from '@/types';
 
 const props = defineProps<{
@@ -13,6 +14,13 @@ const props = defineProps<{
 
     <PublicLayout>
         <article class="mx-auto max-w-3xl px-6 pt-10 pb-24 lg:px-10 lg:pt-16">
+            <Link
+                :href="blogIndex()"
+                class="mb-8 inline-flex items-center text-sm text-current/50 transition-colors hover:text-current/80"
+            >
+                &larr; Back to Journal
+            </Link>
+
             <p
                 v-if="post.published_at"
                 class="mb-6 text-xs tracking-[0.3em] text-current/50 uppercase"
