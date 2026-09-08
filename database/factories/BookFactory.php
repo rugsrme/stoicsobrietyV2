@@ -29,6 +29,10 @@ class BookFactory extends Factory
                 ['quote' => fake()->sentence(20), 'source' => 'Chapter 1'],
                 ['quote' => fake()->sentence(20), 'source' => 'Chapter 2'],
             ],
+            'testimonials' => [
+                ['quote' => fake()->sentence(15), 'author' => fake()->name()],
+                ['quote' => fake()->sentence(15), 'author' => fake()->name()],
+            ],
             'retailer_links' => [
                 'amazon' => 'https://amazon.com/',
                 'barnes_noble' => 'https://barnesandnoble.com/',

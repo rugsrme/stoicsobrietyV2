@@ -104,6 +104,27 @@ const authorParagraphs = computed(() =>
                 </div>
             </div>
 
+            <!-- Back cover -->
+            <div
+                v-if="book.back_cover_url"
+                class="mt-14 flex flex-col items-center border-t border-[var(--site-line)] pt-14"
+            >
+                <p
+                    class="mb-5 text-sm font-semibold text-[var(--site-ink-soft)]"
+                >
+                    Back cover
+                </p>
+                <div
+                    class="aspect-[5/7.4] w-full max-w-[280px] overflow-hidden rounded-md border border-[var(--site-line)] bg-[var(--site-bg-raised)] shadow-[0_18px_44px_var(--site-shadow)]"
+                >
+                    <img
+                        :src="book.back_cover_url"
+                        :alt="`${book.title} — back cover`"
+                        class="h-full w-full object-cover"
+                    />
+                </div>
+            </div>
+
             <div
                 v-if="book.excerpts?.length"
                 class="mt-16 border-t border-[var(--site-line)] pt-14"

@@ -2,6 +2,7 @@
 import { Head } from '@inertiajs/vue3';
 import { Download } from '@lucide/vue';
 import { computed } from 'vue';
+import TestimonialCarousel from '@/components/TestimonialCarousel.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { sample as bookSample } from '@/routes/books';
 import type { Book } from '@/types';
@@ -264,15 +265,18 @@ const authorParagraphs = computed(() =>
                 >
                     Reviews &amp; Testimonials
                 </p>
-                <div class="grid grid-cols-1 gap-[18px] sm:grid-cols-3">
-                    <div
-                        v-for="i in 3"
-                        :key="i"
-                        class="flex min-h-[140px] items-center justify-center rounded border border-dashed border-[var(--site-line)] px-[22px] py-[26px] text-center text-sm text-[var(--site-ink-faint)]"
-                    >
-                        Reader review coming soon
-                    </div>
+
+                <TestimonialCarousel
+                    v-if="book?.testimonials?.length"
+                    :testimonials="book.testimonials"
+                />
+                <div
+                    v-else
+                    class="flex min-h-[140px] items-center justify-center rounded border border-dashed border-[var(--site-line)] px-[22px] py-[26px] text-center text-sm text-[var(--site-ink-faint)]"
+                >
+                    Reader review coming soon
                 </div>
+
                 <p class="mt-[18px] text-[13.5px] text-[var(--site-ink-faint)]">
                     Early reader and reviewer quotes will appear here as they
                     come in.

@@ -3,6 +3,12 @@ export type BookExcerpt = {
     source: string;
 };
 
+export type BookTestimonial = {
+    quote: string;
+    author: string;
+    context?: string;
+};
+
 export type Book = {
     id: number;
     title: string;
@@ -10,11 +16,13 @@ export type Book = {
     subtitle: string | null;
     description: string | null;
     cover_url: string | null;
+    back_cover_url: string | null;
     sample_path: string | null;
     author_name: string | null;
     author_bio: string | null;
     author_photo_url: string | null;
     excerpts: BookExcerpt[] | null;
+    testimonials: BookTestimonial[] | null;
     retailer_links: Record<string, string> | null;
     price: number | null;
     price_formatted: string | null;

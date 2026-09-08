@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Book;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class BookSeeder extends Seeder
 {
@@ -12,12 +14,30 @@ class BookSeeder extends Seeder
      */
     public function run(): void
     {
+        $coverPath = $this->seedImage(
+            resource_path('seed-images/covers/architecture-of-surrender-front.jpg'),
+            'covers/architecture-of-surrender-front.jpg',
+        );
+
+        $backCoverPath = $this->seedImage(
+            resource_path('seed-images/covers/architecture-of-surrender-back.jpg'),
+            'covers/architecture-of-surrender-back.jpg',
+        );
+
+        $authorPhotoPath = $this->seedImage(
+            resource_path('seed-images/authors/quinn-stewart.jpg'),
+            'authors/quinn-stewart.jpg',
+        );
+
         Book::query()->updateOrCreate(
             ['slug' => 'architecture-of-surrender'],
             [
                 'title' => 'The Architecture of Surrender',
                 'subtitle' => 'How a Rabbi, an Emperor, and a Roomful of Drunks Found the Same Way Out — three traditions, one way through.',
+                'cover_path' => $coverPath,
+                'back_cover_path' => $backCoverPath,
                 'author_name' => 'Quinn Stewart',
+                'author_photo_path' => $authorPhotoPath,
                 'author_bio' => implode("\n\n", [
                     'I got sober on December 10, 2018. I was fifty years old, and it took me that long to finally get myself help.',
                     'Before that: over thirty years of drinking. The last few of them, morning until night, every single day. I was what people call a "functioning alcoholic," which is a polite way of saying I was good enough at hiding it, and smart enough — or thought I was smart enough — to keep telling myself it wasn\'t a problem yet. It was a problem the whole time.',
@@ -49,6 +69,24 @@ class BookSeeder extends Seeder
                         'source' => 'About the Author',
                     ],
                 ],
+                // TODO(Quinn): swap these out for real reader/reviewer quotes as they come in.
+                'testimonials' => [
+                    [
+                        'quote' => 'Replace me with a real reader quote — pick one line that names a specific moment the book landed for them, not a generic "great book."',
+                        'author' => 'Placeholder Reviewer',
+                        'context' => 'Swap me out',
+                    ],
+                    [
+                        'quote' => 'A second placeholder so the carousel has something to rotate through — delete once you have two or more real quotes.',
+                        'author' => 'Placeholder Reviewer',
+                        'context' => 'Swap me out',
+                    ],
+                    [
+                        'quote' => 'A third placeholder. Three to five short quotes is a good target for the carousel.',
+                        'author' => 'Placeholder Reviewer',
+                        'context' => 'Swap me out',
+                    ],
+                ],
                 'retailer_links' => [
                     'amazon' => 'https://www.amazon.com/',
                     'barnes_noble' => 'https://www.barnesandnoble.com/',
@@ -62,5 +100,24 @@ class BookSeeder extends Seeder
                 'published_at' => now(),
             ],
         );
+    }
+
+    /**
+     * Copy a repo-committed seed image into the public storage disk, once.
+     * Safe to call on every seeder run — it's a no-op if the file already exists.
+     */
+    private function seedImage(string $sourceAbsolutePath, string $destinationRelativePath): ?string
+    {
+        if (! File::exists($sourceAbsolutePath)) {
+            return null;
+        }
+
+        $disk = Storage::disk('public');
+
+        if (! $disk->exists($destinationRelativePath)) {
+            $disk->put($destinationRelativePath, File::get($sourceAbsolutePath));
+        }
+
+        return $destinationRelativePath;
     }
 }
