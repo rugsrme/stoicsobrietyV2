@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
+import { index as adminPostsIndex } from '@/routes/admin/posts';
 import { index as blogIndex } from '@/routes/blog';
 import type { Post } from '@/types';
 
 const props = defineProps<{
     post: Post;
 }>();
+
+const page = usePage();
+const isLoggedIn = computed(() => Boolean(page.props.auth.user));
 </script>
 
 <template>
@@ -15,10 +20,10 @@ const props = defineProps<{
     <PublicLayout>
         <article class="mx-auto max-w-3xl px-6 pt-10 pb-24 lg:px-10 lg:pt-16">
             <Link
-                :href="blogIndex()"
+                :href="isLoggedIn ? adminPostsIndex() : blogIndex()"
                 class="mb-8 inline-flex items-center text-sm text-current/50 transition-colors hover:text-current/80"
             >
-                &larr; Back to Journal
+                &larr; {{ isLoggedIn ? 'Back to Posts' : 'Back to Journal' }}
             </Link>
 
             <p
