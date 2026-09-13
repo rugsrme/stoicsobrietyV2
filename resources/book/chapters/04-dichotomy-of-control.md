@@ -4,7 +4,7 @@ That man was Epictetus, and the sentence he built his entire teaching on is shor
 
 Three sentences. Three traditions. One instruction. This chapter is about taking that instruction seriously enough to actually use it, instead of just being able to recite it.
 
-## The Two Piles
+## What Was Never Yours
 
 Here's Epictetus's version in full, because the shorthand ("the dichotomy of control") makes it sound more abstract than it is. Some things are up to us: our opinions, our impulses, our desires, our aversions — in a word, everything that is our own doing. Other things are not up to us: our body, our property, our reputation, our position — in a word, everything that is not our own doing.
 
@@ -24,7 +24,7 @@ And then, notably, the Steps don't stop there. Step Two, Three, and everything a
 
 ## A Prayer That's Actually an Instruction Manual
 
-If you've sat in a meeting, you've said the Serenity Prayer probably hundreds of times, likely fast enough that the words have gone a little smooth, the way any phrase does once you've said it enough. I want to slow it down, because it is, in miniature, the entire architecture of this book.
+If you've sat in a meeting, you've said the Serenity Prayer probably hundreds of times, likely fast enough that the words have gone a little smooth, the way any phrase does once you've said it enough. I want to slow it down, because it is, in miniature, the central instruction of this book.
 
 Grant me the serenity to accept the things I cannot change — that's Pile Two. Full stop. Not resignation, not defeat — acceptance, which is a different thing entirely and which we'll come back to later in this book. This is Epictetus's second category and Step One's "powerless," said as a request instead of a claim, because most of us need to ask for the capacity to do this, not just be told to do it.
 

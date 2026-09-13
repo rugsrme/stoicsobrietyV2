@@ -2,7 +2,7 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "rugsrme/stoic-recovery",
     "type": "project",
-    "description": "Stoic Recovery — companion site for the Architecture of Surrender book.",
+    "description": "Stoic Recovery — companion site for the What Was Never Yours book.",
     "keywords": [
         "laravel",
         "framework"

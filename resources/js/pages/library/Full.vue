@@ -16,7 +16,7 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="The Architecture of Surrender" />
+    <Head title="What Was Never Yours" />
 
     <div class="flex flex-1 flex-col gap-6 p-4 md:flex-row md:p-6">
         <aside class="shrink-0 md:w-56">
@@ -46,7 +46,7 @@ defineOptions({
 
         <div class="min-w-0 flex-1">
             <h1 class="text-3xl font-semibold tracking-tight">
-                The Architecture of Surrender
+                What Was Never Yours
             </h1>
             <p class="mt-2 text-muted-foreground">
                 How a Rabbi, an Emperor, and a Roomful of Drunks Found the

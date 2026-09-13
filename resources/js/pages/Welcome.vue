@@ -37,7 +37,7 @@ const authorParagraphs = computed(() =>
 </script>
 
 <template>
-    <Head title="Stoic Recovery — The Architecture of Surrender" />
+    <Head title="Stoic Recovery — What Was Never Yours" />
 
     <PublicLayout>
         <!-- Hero -->
@@ -58,7 +58,7 @@ const authorParagraphs = computed(() =>
                     <h1
                         class="font-serif-display max-w-[15ch] text-[32px] leading-[1.18] font-medium sm:text-[40px] lg:text-[46px]"
                     >
-                        {{ book?.title ?? 'The Architecture of Surrender' }}
+                        {{ book?.title ?? 'What Was Never Yours' }}
                     </h1>
                     <p
                         v-if="book?.subtitle"
@@ -106,7 +106,7 @@ const authorParagraphs = computed(() =>
                         <span
                             class="font-serif-display mt-4 text-2xl leading-tight font-medium"
                         >
-                            {{ book?.title ?? 'The Architecture of Surrender' }}
+                            {{ book?.title ?? 'What Was Never Yours' }}
                         </span>
                     </div>
                 </div>

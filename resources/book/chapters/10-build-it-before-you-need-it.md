@@ -56,7 +56,7 @@ She didn't have time, in that moment, for the morning practice — the two minut
 
 Nothing about the morning practice predicted that afternoon. That's not a flaw in the design — it's the whole reason this chapter insists on two separate tools instead of one. The sticky note built the frame months in advance and had already done its work by the time the phone rang. HALT was the escape route, standing ready in a completely different part of the architecture, for the one job the sticky note was never built to do: survive the four seconds where a decision gets made faster than thought.
 
-## Practice: Build the Architecture
+## Practice: Build Before the Fire
 
 This practice has two pieces, built at two different speeds, and the point is to do both — not because more is better, but because they cover two different emergencies. One is slow and quiet. The other has to work in under five seconds, on a bad night, without you having to think.
 

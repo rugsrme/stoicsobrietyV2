@@ -57,7 +57,7 @@ const chapterNavItems = [
     { slug: 'chapter-7', number: 7, title: 'The Honest Inventory' },
     { slug: 'chapter-8', number: 8, title: "Carried by Something You Didn't Create" },
     { slug: 'chapter-9', number: 9, title: 'Where Two or Three Are Gathered' },
-    { slug: 'chapter-10', number: 10, title: 'The Daily Architecture' },
+    { slug: 'chapter-10', number: 10, title: 'Build It Before You Need It' },
     { slug: 'chapter-11', number: 11, title: "When It Doesn't Hold" },
     { slug: 'chapter-12', number: 12, title: "Life on Life's Terms" },
 ];

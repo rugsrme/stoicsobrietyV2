@@ -1,6 +1,6 @@
 # Stoic Recovery
 
-Companion site for _The Architecture of Surrender_ and future Stoic Recovery titles.
+Companion site for _What Was Never Yours_ and future Stoic Recovery titles.
 
 ## Stack
 

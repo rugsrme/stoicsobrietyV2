@@ -3,7 +3,7 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | The Architecture of Surrender — reader content
+    | What Was Never Yours — reader content
     |--------------------------------------------------------------------------
     |
     | Ordered list of the book's chapters. Each "file" lives under
@@ -75,8 +75,8 @@ return [
         [
             'slug' => 'chapter-10',
             'number' => 10,
-            'title' => 'The Daily Architecture',
-            'file' => '10-daily-architecture.md',
+            'title' => 'Build It Before You Need It',
+            'file' => '10-build-it-before-you-need-it.md',
         ],
         [
             'slug' => 'chapter-11',

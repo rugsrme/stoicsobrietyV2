@@ -31,7 +31,7 @@ defineOptions({
                 Subscribers Area
             </h1>
             <p class="mt-1 max-w-xl text-muted-foreground">
-                Read <em>The Architecture of Surrender</em> straight from
+                Read <em>What Was Never Yours</em> straight from
                 here — the whole book on one page, or one chapter at a time.
             </p>
         </div>
