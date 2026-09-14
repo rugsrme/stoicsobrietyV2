@@ -120,6 +120,13 @@ function toggleTheme() {
                             >Affiliate Disclosure</Link
                         >
                     </li>
+                    <li>
+                        <Link
+                            href="/privacy-policy"
+                            class="hover:text-[var(--site-ink)]"
+                            >Privacy Policy</Link
+                        >
+                    </li>
                 </ul>
                 <p class="text-[13px] text-[var(--site-ink-faint)]">
                     &copy; {{ new Date().getFullYear() }} Stoic Recovery. All
