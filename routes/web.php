@@ -17,6 +17,8 @@ Route::get('books/{book:slug}/sample', [BookController::class, 'sample'])->name(
 Route::get('blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
 
+Route::inertia('affiliate-disclosure', 'AffiliateDisclosure')->name('affiliate-disclosure');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
