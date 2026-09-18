@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\DashboardController;
@@ -37,6 +40,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('posts/{post}/edit', [AdminPostController::class, 'edit'])->name('posts.edit');
             Route::put('posts/{post}', [AdminPostController::class, 'update'])->name('posts.update');
             Route::delete('posts/{post}', [AdminPostController::class, 'destroy'])->name('posts.destroy');
+
+            Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+            Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+            Route::get('users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+            Route::patch('users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+
+            Route::resource('orders', AdminOrderController::class)->except('show');
         });
     });
 });

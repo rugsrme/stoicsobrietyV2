@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, ChevronRight, House, Library, Newspaper } from '@lucide/vue';
-import { ref } from 'vue';
+import {
+    BookOpen,
+    ChevronRight,
+    House,
+    Library,
+    Newspaper,
+    ShieldCheck,
+} from '@lucide/vue';
+import { computed, ref } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -22,13 +29,14 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard, home } from '@/routes';
+import { dashboard as adminDashboard } from '@/routes/admin';
 import { index as adminPostsIndex } from '@/routes/admin/posts';
 import { chapter as chapterRoute, full as fullRoute } from '@/routes/library';
 import type { NavItem } from '@/types';
 
 const page = usePage();
 
-const mainNavItems: NavItem[] = [
+const mainNavItems = computed<NavItem[]>(() => [
     {
         title: 'Subscribers Area',
         href: dashboard(),
@@ -44,10 +52,23 @@ const mainNavItems: NavItem[] = [
         href: adminPostsIndex(),
         icon: Newspaper,
     },
-];
+    ...(page.props.auth.user?.is_admin
+        ? [
+              {
+                  title: 'Admin',
+                  href: adminDashboard(),
+                  icon: ShieldCheck,
+              },
+          ]
+        : []),
+]);
 
 const chapterNavItems = [
-    { slug: 'front-matter', number: null as number | null, title: 'About This Book' },
+    {
+        slug: 'front-matter',
+        number: null as number | null,
+        title: 'About This Book',
+    },
     { slug: 'chapter-1', number: 1, title: "You're Not Fighting Anything" },
     { slug: 'chapter-2', number: 2, title: 'Self-Will Run Riot' },
     { slug: 'chapter-3', number: 3, title: 'The Illusion of Control' },
@@ -55,7 +76,11 @@ const chapterNavItems = [
     { slug: 'chapter-5', number: 5, title: 'Putting Down the Gavel' },
     { slug: 'chapter-6', number: 6, title: 'The Debt You Keep Paying' },
     { slug: 'chapter-7', number: 7, title: 'The Honest Inventory' },
-    { slug: 'chapter-8', number: 8, title: "Carried by Something You Didn't Create" },
+    {
+        slug: 'chapter-8',
+        number: 8,
+        title: "Carried by Something You Didn't Create",
+    },
     { slug: 'chapter-9', number: 9, title: 'Where Two or Three Are Gathered' },
     { slug: 'chapter-10', number: 10, title: 'Build It Before You Need It' },
     { slug: 'chapter-11', number: 11, title: "When It Doesn't Hold" },
@@ -102,7 +127,10 @@ const chaptersOpen = ref(page.url.startsWith('/library/chapters'));
                                 v-for="item in chapterNavItems"
                                 :key="item.slug"
                             >
-                                <SidebarMenuButton as-child :tooltip="item.title">
+                                <SidebarMenuButton
+                                    as-child
+                                    :tooltip="item.title"
+                                >
                                     <Link :href="chapterRoute(item.slug)">
                                         <span class="truncate">{{
                                             item.number
