@@ -107,10 +107,7 @@ class BookSeeder extends Seeder
                 ],
             ],
             'retailer_links' => [
-                'amazon' => 'https://www.amazon.com/',
-                'barnes_noble' => 'https://www.barnesandnoble.com/',
-                'bookshop' => 'https://bookshop.org/',
-                'apple_books' => 'https://books.apple.com/',
+                'amazon' => 'https://www.amazon.com/dp/B0HKRD9WDG',
             ],
             'price' => 1899,
             'currency' => 'USD',
