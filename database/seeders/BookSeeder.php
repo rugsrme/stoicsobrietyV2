@@ -89,23 +89,10 @@ class BookSeeder extends Seeder
                 ],
             ],
             // TODO(Quinn): swap these out for real reader/reviewer quotes as they come in.
-            'testimonials' => [
-                [
-                    'quote' => 'Replace me with a real reader quote — pick one line that names a specific moment the book landed for them, not a generic "great book."',
-                    'author' => 'Placeholder Reviewer',
-                    'context' => 'Swap me out',
-                ],
-                [
-                    'quote' => 'A second placeholder so the carousel has something to rotate through — delete once you have two or more real quotes.',
-                    'author' => 'Placeholder Reviewer',
-                    'context' => 'Swap me out',
-                ],
-                [
-                    'quote' => 'A third placeholder. Three to five short quotes is a good target for the carousel.',
-                    'author' => 'Placeholder Reviewer',
-                    'context' => 'Swap me out',
-                ],
-            ],
+            // Reader reviews for the landing-page carousel, as
+            // ['quote' => ..., 'author' => ..., 'context' => ...] entries.
+            // The section stays hidden while this is empty.
+            'testimonials' => [],
             'retailer_links' => [
                 'amazon' => 'https://www.amazon.com/dp/B0HKRD9WDG',
             ],

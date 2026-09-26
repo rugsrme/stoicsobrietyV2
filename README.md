@@ -1,6 +1,6 @@
-# Stoic Recovery
+# Sober Now We Live
 
-Companion site for _What Was Never Yours_ and future Stoic Recovery titles.
+Companion site for _What Was Never Yours_ and future titles — plus Reflections and book reviews.
 
 ## Stack
 
@@ -64,18 +64,36 @@ composer run test
 
 - `/` — Landing page featuring the current book
 - `/books`, `/books/{book}` — Book catalog (built to hold more than one title)
-- `/blog`, `/blog/{post}` — Public journal
+- `/read`, `/read/{chapter}` — Free public sample: the opening and Chapters 1–3
+  (`config('book.public_chapters')`); later chapters send readers to the subscriber library
+- `/reflections`, `/reflections/{post}` — Public reflections (old `/blog` links redirect here)
+- `/reviews`, `/reviews/{post}` — Public book reviews, with cover image and affiliate links
 - `/dashboard` — Authenticated dashboard
 - `/settings/*` — Authenticated account settings (profile, avatar, security)
-- `/admin/posts/*` — Authenticated journal admin (create, edit, publish)
+- `/library/*` — Authenticated full-book reader
+- `/journal`, `/journal/{post}` — Private journal, visible to admins only
+- `/admin/posts/*` — Admin-only Writing editor for all three (rich text with image upload; paste from
+  Facebook works, and pasted remote images are copied to local storage on save)
 
 ### Models
 
 - `Book` — title, retailer links, excerpts, author bio, `price` (cents) and `purchase_type`
   (`link` today; the schema is ready for a `stripe` checkout later without a migration rework)
-- `Post` — simple database-backed blog post (title, slug, body, `published_at`, author)
+- `Post` — reflection, book review, or private journal entry
+  (`category`: `reflection` | `book-review` | `journal`). Body is HTML from the
+  editor, sanitized on save by `App\Support\PostHtml`. Reviews add the reviewed book's title,
+  author, an optional 1–5 rating, and `affiliate_links`.
 - `User` — standard Fortify user, extended with `display_name`, `bio`, and `avatar_path`
   (stored on the `public` disk) for profile pages. No teams/roles yet — kept deliberately simple.
+
+### Book text
+
+The reader content lives in `resources/book/chapters/*.md` and is generated from the KDP
+manuscript PDF. When the manuscript changes, regenerate it (needs Python 3 and PyMuPDF):
+
+```bash
+python3 scripts/book-from-pdf.py path/to/What_Was_Never_Yours_6x9_KDP_FINAL.pdf resources/book/chapters
+```
 
 ## Deployment
 

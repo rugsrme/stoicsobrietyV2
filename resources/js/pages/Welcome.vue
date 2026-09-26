@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { Download } from '@lucide/vue';
-import { computed } from 'vue';
+import { BookOpen, ChevronDown, Download } from '@lucide/vue';
+import { computed, ref } from 'vue';
 import ExcerptTicker from '@/components/ExcerptTicker.vue';
 import TestimonialCarousel from '@/components/TestimonialCarousel.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { sample as bookSample, show as bookShow } from '@/routes/books';
+import { index as sampleIndex } from '@/routes/sample';
 import type { Book } from '@/types';
 
 const props = defineProps<{
@@ -34,10 +35,27 @@ const retailers = computed(() => {
 const authorParagraphs = computed(() =>
     (props.book?.author_bio ?? '').split('\n\n').filter(Boolean),
 );
+
+// Reader reviews carousel. Hidden until real reviews are in; set to true
+// (and add testimonials in BookSeeder) to bring the section back.
+const showTestimonials = false;
+
+// Show about a paragraph's worth of the bio up front (the opening lines can
+// be very short); the rest sits behind "Read more".
+const authorExpanded = ref(false);
+
+const authorLead = computed(() => {
+    let length = 0;
+    const count = authorParagraphs.value.findIndex(
+        (p) => (length += p.length) >= 200,
+    );
+
+    return count === -1 ? authorParagraphs.value.length : count + 1;
+});
 </script>
 
 <template>
-    <Head title="Stoic Recovery — What Was Never Yours" />
+    <Head title="What Was Never Yours" />
 
     <PublicLayout>
         <!-- Hero -->
@@ -48,8 +66,7 @@ const authorParagraphs = computed(() =>
                 <div>
                     <p
                         class="mb-[18px] text-[15px] text-[var(--site-ink-faint)]"
-                    >
-                    </p>
+                    ></p>
                     <ExcerptTicker
                         v-if="book?.excerpts?.length"
                         :excerpts="book.excerpts"
@@ -101,7 +118,7 @@ const authorParagraphs = computed(() =>
                     >
                         <span
                             class="text-xs tracking-[0.3em] text-[var(--site-ink-faint)] uppercase"
-                            >Stoic Recovery</span
+                            >Sober Now We Live</span
                         >
                         <span
                             class="font-serif-display mt-4 text-2xl leading-tight font-medium"
@@ -150,7 +167,10 @@ const authorParagraphs = computed(() =>
 
                     <div class="max-w-[660px]">
                         <p
-                            v-for="(paragraph, i) in authorParagraphs"
+                            v-for="(paragraph, i) in authorParagraphs.slice(
+                                0,
+                                authorLead,
+                            )"
                             :key="i"
                             class="mb-[18px]"
                             :class="
@@ -161,6 +181,45 @@ const authorParagraphs = computed(() =>
                         >
                             {{ paragraph }}
                         </p>
+
+                        <div
+                            v-if="authorParagraphs.length > authorLead"
+                            id="author-bio-more"
+                            class="grid transition-[grid-template-rows] duration-300 ease-out"
+                            :class="
+                                authorExpanded
+                                    ? 'grid-rows-[1fr]'
+                                    : 'grid-rows-[0fr]'
+                            "
+                            :inert="!authorExpanded"
+                        >
+                            <div class="overflow-hidden">
+                                <p
+                                    v-for="(
+                                        paragraph, i
+                                    ) in authorParagraphs.slice(authorLead)"
+                                    :key="i"
+                                    class="mb-[18px] text-[var(--site-ink-soft)]"
+                                >
+                                    {{ paragraph }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <button
+                            v-if="authorParagraphs.length > authorLead"
+                            type="button"
+                            class="inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
+                            aria-controls="author-bio-more"
+                            :aria-expanded="authorExpanded"
+                            @click="authorExpanded = !authorExpanded"
+                        >
+                            {{ authorExpanded ? 'Show less' : 'Read more…' }}
+                            <ChevronDown
+                                class="size-4 transition-transform"
+                                :class="authorExpanded ? 'rotate-180' : ''"
+                            />
+                        </button>
                     </div>
                 </div>
             </div>
@@ -208,32 +267,39 @@ const authorParagraphs = computed(() =>
                         <h3
                             class="font-serif-display mb-2 text-[22px] font-medium"
                         >
-                            Download a free sample
+                            Read the first three chapters free
                         </h3>
                         <p class="max-w-[46ch] text-[var(--site-ink-soft)]">
-                            The opening chapter, free — three traditions, one
-                            door, and why they all lead to the same place.
+                            The opening of the book and Chapters 1–3, right here
+                            in your browser. No account needed.
                         </p>
                     </div>
-                    <a
-                        v-if="book?.sample_path"
-                        :href="bookSample(book.slug).url"
-                        class="inline-flex items-center gap-2 rounded border border-[var(--site-ink)] px-[22px] py-3 text-[15px] font-semibold whitespace-nowrap transition-colors hover:bg-[var(--site-ink)] hover:text-[var(--site-bg)]"
-                    >
-                        <Download class="size-4" />
-                        Download Sample PDF
-                    </a>
-                    <span
-                        v-else
-                        class="text-sm text-[var(--site-ink-faint)] italic"
-                        >Coming soon</span
-                    >
+                    <div class="flex flex-col items-start gap-3">
+                        <Link
+                            :href="sampleIndex()"
+                            class="inline-flex items-center gap-2 rounded bg-[var(--site-accent)] px-[22px] py-3 text-[15px] font-semibold whitespace-nowrap text-[var(--site-accent-ink)] transition-transform hover:-translate-y-px"
+                        >
+                            <BookOpen class="size-4" />
+                            Start reading
+                        </Link>
+                        <a
+                            v-if="book?.sample_path"
+                            :href="bookSample(book.slug).url"
+                            class="inline-flex items-center gap-2 text-sm font-semibold text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
+                        >
+                            <Download class="size-4" />
+                            Or download the sample PDF
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Reviews -->
-        <section class="py-17">
+        <!-- Reviews — hidden for now; flip showTestimonials once there are real ones -->
+        <section
+            v-if="showTestimonials && book?.testimonials?.length"
+            class="py-17"
+        >
             <div class="mx-auto max-w-4xl px-7">
                 <p
                     class="mb-7 text-sm font-semibold text-[var(--site-ink-soft)]"
@@ -241,16 +307,7 @@ const authorParagraphs = computed(() =>
                     Reviews &amp; Testimonials
                 </p>
 
-                <TestimonialCarousel
-                    v-if="book?.testimonials?.length"
-                    :testimonials="book.testimonials"
-                />
-                <div
-                    v-else
-                    class="flex min-h-[140px] items-center justify-center rounded border border-dashed border-[var(--site-line)] px-[22px] py-[26px] text-center text-sm text-[var(--site-ink-faint)]"
-                >
-                    Reader review coming soon
-                </div>
+                <TestimonialCarousel :testimonials="book.testimonials" />
             </div>
         </section>
     </PublicLayout>

@@ -2,10 +2,12 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import {
     BookOpen,
+    BookOpenCheck,
     ChevronRight,
     House,
     Library,
     Newspaper,
+    NotebookPen,
     ShieldCheck,
 } from '@lucide/vue';
 import { computed, ref } from 'vue';
@@ -30,8 +32,10 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard, home } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
-import { index as adminPostsIndex } from '@/routes/admin/posts';
+import { index as journalIndex } from '@/routes/journal';
 import { chapter as chapterRoute, full as fullRoute } from '@/routes/library';
+import { index as reflectionsIndex } from '@/routes/reflections';
+import { index as reviewsIndex } from '@/routes/reviews';
 import type { NavItem } from '@/types';
 
 const page = usePage();
@@ -48,12 +52,22 @@ const mainNavItems = computed<NavItem[]>(() => [
         icon: BookOpen,
     },
     {
-        title: 'Posts',
-        href: adminPostsIndex(),
+        title: 'Reflections',
+        href: reflectionsIndex(),
         icon: Newspaper,
+    },
+    {
+        title: 'Book Reviews',
+        href: reviewsIndex(),
+        icon: BookOpenCheck,
     },
     ...(page.props.auth.user?.is_admin
         ? [
+              {
+                  title: 'Journal',
+                  href: journalIndex(),
+                  icon: NotebookPen,
+              },
               {
                   title: 'Admin',
                   href: adminDashboard(),
@@ -85,6 +99,7 @@ const chapterNavItems = [
     { slug: 'chapter-10', number: 10, title: 'Build It Before You Need It' },
     { slug: 'chapter-11', number: 11, title: "When It Doesn't Hold" },
     { slug: 'chapter-12', number: 12, title: "Life on Life's Terms" },
+    { slug: 'sources-and-notes', number: null, title: 'Sources and Notes' },
 ];
 
 const chaptersOpen = ref(page.url.startsWith('/library/chapters'));

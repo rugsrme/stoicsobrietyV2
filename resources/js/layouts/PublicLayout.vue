@@ -2,7 +2,10 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { Moon, Sun } from '@lucide/vue';
 import { dashboard, login } from '@/routes';
-import { index as blogIndex } from '@/routes/blog';
+import { index as journalIndex } from '@/routes/journal';
+import { index as reflectionsIndex } from '@/routes/reflections';
+import { index as reviewsIndex } from '@/routes/reviews';
+import { index as sampleIndex } from '@/routes/sample';
 import { useAppearance } from '@/composables/useAppearance';
 
 const { resolvedAppearance, updateAppearance } = useAppearance();
@@ -35,11 +38,52 @@ function toggleTheme() {
             <div
                 class="mx-auto flex max-w-4xl items-center justify-between px-7 py-[18px]"
             >
-                <Link href="/" class="text-[17px] font-semibold tracking-tight"
-                    >Stoic Recovery</Link
+                <Link
+                    href="/"
+                    class="flex items-center gap-2.5 text-[17px] font-semibold tracking-tight"
                 >
+                    <img
+                        src="/brand/mark.svg"
+                        alt=""
+                        class="size-8 shrink-0 rounded-lg"
+                    />
+                    <span
+                        >Sober
+                        <span class="text-[var(--site-accent)]"
+                            >Now We Live</span
+                        ></span
+                    >
+                </Link>
 
                 <nav class="flex items-center gap-4">
+                    <div class="hidden items-center gap-5 sm:flex">
+                        <Link
+                            :href="sampleIndex()"
+                            class="text-sm text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
+                        >
+                            Read Free
+                        </Link>
+                        <Link
+                            :href="reflectionsIndex()"
+                            class="text-sm text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
+                        >
+                            Reflections
+                        </Link>
+                        <Link
+                            :href="reviewsIndex()"
+                            class="text-sm text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
+                        >
+                            Book Reviews
+                        </Link>
+                        <Link
+                            v-if="$page.props.auth.user?.is_admin"
+                            :href="journalIndex()"
+                            class="text-sm text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
+                            title="Private — admins only"
+                        >
+                            Journal
+                        </Link>
+                    </div>
                     <Link
                         v-if="$page.props.auth.user"
                         :href="dashboard()"
@@ -80,12 +124,36 @@ function toggleTheme() {
             <slot />
         </main>
 
-        <footer class="py-11">
+        <footer class="border-t border-[var(--site-line)] py-11">
+            <div class="mx-auto mb-9 flex max-w-4xl items-center gap-5 px-7">
+                <img
+                    src="/brand/badge.webp"
+                    alt="Sober Now We Live"
+                    class="size-24 shrink-0 rounded-full"
+                    loading="lazy"
+                />
+                <div>
+                    <p class="text-[15px] font-semibold">
+                        Sober
+                        <span class="text-[var(--site-accent)]"
+                            >Now We Live</span
+                        >
+                    </p>
+                    <p
+                        class="mt-1 text-xs tracking-[0.2em] text-[var(--site-ink-soft)] uppercase"
+                    >
+                        Steps · Stoicism · Scripture
+                    </p>
+                    <p class="mt-1 text-sm text-[var(--site-ink-faint)]">
+                        A more honest way forward.
+                    </p>
+                </div>
+            </div>
             <div
                 class="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-[18px] px-7"
             >
                 <ul
-                    class="flex list-none gap-[22px] p-0 text-sm text-[var(--site-ink-soft)]"
+                    class="flex list-none flex-wrap gap-x-[22px] gap-y-2 p-0 text-sm text-[var(--site-ink-soft)]"
                 >
                     <li>
                         <Link href="/" class="hover:text-[var(--site-ink)]"
@@ -101,14 +169,28 @@ function toggleTheme() {
                     </li>
                     <li>
                         <Link
-                            :href="blogIndex()"
+                            :href="sampleIndex()"
                             class="hover:text-[var(--site-ink)]"
-                            >Journal</Link
+                            >Read Free</Link
+                        >
+                    </li>
+                    <li>
+                        <Link
+                            :href="reflectionsIndex()"
+                            class="hover:text-[var(--site-ink)]"
+                            >Reflections</Link
+                        >
+                    </li>
+                    <li>
+                        <Link
+                            :href="reviewsIndex()"
+                            class="hover:text-[var(--site-ink)]"
+                            >Book Reviews</Link
                         >
                     </li>
                     <li>
                         <a
-                            href="mailto:hello@stoicrecovery.com"
+                            href="mailto:contact@quinnix.com"
                             class="hover:text-[var(--site-ink)]"
                             >Contact</a
                         >
@@ -129,7 +211,7 @@ function toggleTheme() {
                     </li>
                 </ul>
                 <p class="text-[13px] text-[var(--site-ink-faint)]">
-                    &copy; {{ new Date().getFullYear() }} Stoic Recovery. All
+                    &copy; {{ new Date().getFullYear() }} Sober Now We Live. All
                     rights reserved.
                 </p>
             </div>

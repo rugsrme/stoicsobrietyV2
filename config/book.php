@@ -8,7 +8,8 @@ return [
     |
     | Ordered list of the book's chapters. Each "file" lives under
     | resources/book/chapters/ and is parsed into paragraph/heading blocks
-    | by App\Support\BookContent.
+    | by App\Support\BookContent. The files are generated from the KDP
+    | manuscript with scripts/book-from-pdf.py.
     |
     */
     'chapters' => [
@@ -90,5 +91,27 @@ return [
             'title' => "Life on Life's Terms",
             'file' => '12-life-on-lifes-terms.md',
         ],
+        [
+            'slug' => 'sources-and-notes',
+            'number' => null,
+            'title' => 'Sources and Notes',
+            'file' => '13-sources-and-notes.md',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Free sample
+    |--------------------------------------------------------------------------
+    |
+    | Chapters (by slug) anyone can read without an account: the opening of
+    | the book and the first three chapters.
+    |
+    */
+    'public_chapters' => [
+        'front-matter',
+        'chapter-1',
+        'chapter-2',
+        'chapter-3',
     ],
 ];

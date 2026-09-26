@@ -13,7 +13,9 @@ void createInertiaApp({
     layout: (name) => {
         switch (true) {
             case name === 'Welcome':
-            case name.startsWith('blog/'):
+            case name.startsWith('posts/'):
+            case name.startsWith('reviews/'):
+            case name.startsWith('sample/'):
             case name.startsWith('books/'):
                 return null;
             case name.startsWith('auth/'):
@@ -23,6 +25,7 @@ void createInertiaApp({
             case name === 'admin/Dashboard':
             case name.startsWith('admin/users/'):
             case name.startsWith('admin/orders/'):
+            case name.startsWith('admin/posts/'):
                 return [AppLayout, AdminLayout];
             default:
                 return AppLayout;

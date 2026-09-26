@@ -32,12 +32,33 @@ export type Book = {
     published_at: string | null;
 };
 
+export type PostCategory = 'reflection' | 'book-review' | 'journal';
+
+export type PostCategoryOption = {
+    value: PostCategory;
+    label: string;
+    plural: string;
+};
+
+export type AffiliateLink = {
+    label: string;
+    url: string;
+};
+
 export type PostSummary = {
     id: number;
+    category: PostCategory;
     title: string;
     slug: string;
     excerpt: string | null;
+    /** The excerpt, or the opening of the body when none was written. */
+    summary?: string;
+    cover_image_url: string | null;
+    reviewed_book_title: string | null;
+    reviewed_book_author: string | null;
+    rating: number | null;
     published_at: string | null;
+    author?: PostAuthor;
 };
 
 export type PostAuthor = {
@@ -48,5 +69,6 @@ export type PostAuthor = {
 
 export type Post = PostSummary & {
     body: string;
+    affiliate_links: AffiliateLink[] | null;
     author: PostAuthor;
 };

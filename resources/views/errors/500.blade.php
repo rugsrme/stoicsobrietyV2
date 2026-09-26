@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Something went wrong — Stoic Recovery</title>
+        <title>Something went wrong — Sober Now We Live</title>
         <style>
             :root {
                 --site-bg: #f0eff6;
@@ -80,7 +80,7 @@
         </style>
     </head>
     <body>
-        <p class="eyebrow">Stoic Recovery</p>
+        <p class="eyebrow">Sober Now We Live</p>
         <h1>Something went wrong on our end.</h1>
         <p>It's not you — a fix is likely already on the way. Try again in a moment.</p>
         <a class="home" href="/">Back to home</a>

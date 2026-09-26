@@ -19,7 +19,7 @@ const sidebarNavItems: NavItem[] = [
     { title: 'Overview', href: dashboard() },
     { title: 'Users', href: usersIndex() },
     { title: 'Orders', href: ordersIndex() },
-    { title: 'Posts', href: postsIndex() },
+    { title: 'Writing', href: postsIndex() },
 ];
 
 const { isCurrentOrParentUrl } = useCurrentUrl();

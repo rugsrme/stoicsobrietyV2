@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Page not found — Stoic Recovery</title>
+        <title>Page not found — Sober Now We Live</title>
         <style>
             :root {
                 --site-bg: #f0eff6;
@@ -80,7 +80,7 @@
         </style>
     </head>
     <body>
-        <p class="eyebrow">Stoic Recovery</p>
+        <p class="eyebrow">Sober Now We Live</p>
         <h1>This page doesn't exist.</h1>
         <p>The link you followed may be broken, or the page may have moved.</p>
         <a class="home" href="/">Back to home</a>

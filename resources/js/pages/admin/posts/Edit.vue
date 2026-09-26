@@ -1,101 +1,44 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
-import PostController from '@/actions/App/Http/Controllers/Admin/PostController';
+import { Head, Link } from '@inertiajs/vue3';
+import { ExternalLink } from '@lucide/vue';
 import Heading from '@/components/Heading.vue';
-import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import PostForm from '@/components/PostForm.vue';
+import { postNoun, postUrl } from '@/lib/posts';
 import { index } from '@/routes/admin/posts';
-import type { Post } from '@/types';
+import type { Post, PostCategoryOption } from '@/types';
 
 defineProps<{
     post: Post;
+    categories: PostCategoryOption[];
 }>();
 
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Posts', href: index() },
-            { title: 'Edit post', href: index() },
+            { title: 'Writing', href: index() },
+            { title: 'Edit', href: index() },
         ],
     },
 });
 </script>
 
 <template>
-    <Head title="Edit post" />
+    <Head :title="`Edit: ${post.title}`" />
 
-    <div class="max-w-2xl">
-        <Heading title="Edit post" :description="post.title" />
-
-        <Form
-            v-bind="PostController.update.form(post.id)"
-            class="space-y-6"
-            v-slot="{ errors, processing }"
+    <div class="flex items-start justify-between gap-4">
+        <Heading
+            :title="`Edit ${postNoun(post.category)}`"
+            :description="post.title"
+        />
+        <Link
+            v-if="post.published_at"
+            :href="postUrl(post)"
+            class="text-muted-foreground hover:text-foreground inline-flex shrink-0 items-center gap-1.5 text-sm"
         >
-            <div class="grid gap-2">
-                <Label for="title">Title</Label>
-                <Input
-                    id="title"
-                    name="title"
-                    :default-value="post.title"
-                    required
-                />
-                <InputError :message="errors.title" />
-            </div>
-
-            <div class="grid gap-2">
-                <Label for="slug">Slug</Label>
-                <Input
-                    id="slug"
-                    name="slug"
-                    :default-value="post.slug"
-                    required
-                />
-                <InputError :message="errors.slug" />
-            </div>
-
-            <div class="grid gap-2">
-                <Label for="excerpt">Excerpt</Label>
-                <Textarea
-                    id="excerpt"
-                    name="excerpt"
-                    :default-value="post.excerpt ?? ''"
-                />
-                <InputError :message="errors.excerpt" />
-            </div>
-
-            <div class="grid gap-2">
-                <Label for="body">Body</Label>
-                <Textarea
-                    id="body"
-                    name="body"
-                    class="min-h-64"
-                    :default-value="post.body"
-                    required
-                />
-                <InputError :message="errors.body" />
-            </div>
-
-            <div class="flex items-center gap-2">
-                <input
-                    id="published"
-                    type="checkbox"
-                    name="published"
-                    value="1"
-                    class="size-4"
-                    :checked="!!post.published_at"
-                />
-                <Label for="published">Published</Label>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <Button type="submit" :disabled="processing"
-                    >Save changes</Button
-                >
-            </div>
-        </Form>
+            {{ post.category === 'journal' ? 'View' : 'View live' }}
+            <ExternalLink class="size-3.5" />
+        </Link>
     </div>
+
+    <PostForm :key="post.id" :post="post" :categories="categories" />
 </template>

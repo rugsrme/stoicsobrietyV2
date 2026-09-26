@@ -1,6 +1,7 @@
 export type BookBlock = {
-    type: 'heading' | 'paragraph';
+    type: 'heading' | 'subheading' | 'item' | 'paragraph';
     text: string;
+    number?: number;
 };
 
 export type LibraryChapterSummary = {
@@ -11,4 +12,8 @@ export type LibraryChapterSummary = {
 
 export type LibraryChapter = LibraryChapterSummary & {
     blocks: BookBlock[];
+};
+
+export type SampleChapterSummary = LibraryChapterSummary & {
+    public: boolean;
 };

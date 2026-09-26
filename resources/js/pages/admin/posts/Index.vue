@@ -1,88 +1,173 @@
 <script setup lang="ts">
-import { Form, Head, Link, router, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { BookOpen, Newspaper, NotebookPen } from '@lucide/vue';
 import PostController from '@/actions/App/Http/Controllers/Admin/PostController';
 import Heading from '@/components/Heading.vue';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { postUrl } from '@/lib/posts';
 import { create, edit, index } from '@/routes/admin/posts';
-import { show as blogShow } from '@/routes/blog';
-import type { Post } from '@/types';
+import type { PostCategory, PostCategoryOption, PostSummary } from '@/types';
 
-defineProps<{
-    posts: Pick<Post, 'id' | 'title' | 'slug' | 'published_at'>[];
+const props = defineProps<{
+    posts: (Pick<
+        PostSummary,
+        | 'id'
+        | 'category'
+        | 'title'
+        | 'slug'
+        | 'published_at'
+        | 'cover_image_url'
+    > & { updated_at: string })[];
+    category: PostCategory | null;
+    categories: PostCategoryOption[];
 }>();
-
-const page = usePage();
-const isAdmin = computed(() => Boolean(page.props.auth.user?.is_admin));
 
 defineOptions({
     layout: {
-        breadcrumbs: [{ title: 'Posts', href: index() }],
+        breadcrumbs: [{ title: 'Writing', href: index() }],
     },
 });
 
-function isPublished(publishedAt: string | null): boolean {
-    return publishedAt !== null && new Date(publishedAt) <= new Date();
+function status(publishedAt: string | null): string {
+    if (publishedAt === null) return 'Draft';
+
+    return new Date(publishedAt) <= new Date() ? 'Published' : 'Scheduled';
 }
 
-function openPost(post: Pick<Post, 'slug' | 'published_at'>) {
-    if (isPublished(post.published_at)) {
-        router.visit(blogShow(post.slug));
-    }
+function destroy(post: Pick<PostSummary, 'id' | 'title'>) {
+    if (!confirm(`Delete “${post.title}”? This can't be undone.`)) return;
+
+    router.delete(PostController.destroy.url(post.id), {
+        preserveScroll: true,
+    });
+}
+
+function categoryLabel(value: PostCategory): string {
+    return props.categories.find((c) => c.value === value)?.label ?? value;
 }
 </script>
 
 <template>
-    <Head title="Posts" />
+    <Head title="Writing" />
 
     <div class="flex flex-col gap-6">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-wrap items-start justify-between gap-4">
             <Heading
-                title="Posts"
-                description="Write and publish journal entries"
+                title="Writing"
+                description="Reflections and book reviews for the public site, plus your private journal"
             />
-            <Button v-if="isAdmin" as-child>
-                <Link :href="create()">New post</Link>
-            </Button>
+            <div class="flex flex-wrap gap-2">
+                <Button as-child variant="outline">
+                    <Link :href="create({ query: { category: 'journal' } })">
+                        <NotebookPen class="size-4" />
+                        New journal entry
+                    </Link>
+                </Button>
+                <Button as-child variant="outline">
+                    <Link
+                        :href="create({ query: { category: 'book-review' } })"
+                    >
+                        <BookOpen class="size-4" />
+                        New review
+                    </Link>
+                </Button>
+                <Button as-child>
+                    <Link :href="create({ query: { category: 'reflection' } })">
+                        <Newspaper class="size-4" />
+                        New reflection
+                    </Link>
+                </Button>
+            </div>
         </div>
+
+        <nav class="flex gap-1 border-b" aria-label="Filter by section">
+            <Link
+                v-for="tab in [{ value: null, plural: 'All' }, ...categories]"
+                :key="tab.value ?? 'all'"
+                :href="
+                    index(tab.value ? { query: { category: tab.value } } : {})
+                "
+                class="-mb-px border-b-2 px-3 py-2 text-sm transition-colors"
+                :class="
+                    category === tab.value
+                        ? 'border-foreground text-foreground font-medium'
+                        : 'text-muted-foreground hover:text-foreground border-transparent'
+                "
+                preserve-state
+            >
+                {{ tab.plural }}
+            </Link>
+        </nav>
 
         <div
             v-if="posts.length"
-            class="border-border divide-border divide-y rounded-lg border"
+            class="divide-border border-border divide-y rounded-lg border"
         >
             <div
                 v-for="post in posts"
                 :key="post.id"
-                class="flex items-center justify-between gap-4 px-4 py-3 transition-colors"
-                :class="
-                    isPublished(post.published_at)
-                        ? 'cursor-pointer hover:bg-accent'
-                        : ''
-                "
-                @click="openPost(post)"
+                class="flex items-center gap-4 px-4 py-3"
             >
-                <div>
-                    <p class="font-medium">{{ post.title }}</p>
-                    <p class="text-muted-foreground text-sm">
-                        {{ post.published_at ? 'Published' : 'Draft' }}
-                    </p>
+                <div
+                    class="bg-muted flex size-12 shrink-0 items-center justify-center overflow-hidden rounded"
+                >
+                    <img
+                        v-if="post.cover_image_url"
+                        :src="post.cover_image_url"
+                        alt=""
+                        class="size-full object-cover"
+                    />
+                    <BookOpen
+                        v-else-if="post.category === 'book-review'"
+                        class="text-muted-foreground size-5"
+                    />
+                    <NotebookPen
+                        v-else-if="post.category === 'journal'"
+                        class="text-muted-foreground size-5"
+                    />
+                    <Newspaper v-else class="text-muted-foreground size-5" />
                 </div>
-                <div v-if="isAdmin" class="flex items-center gap-2" @click.stop>
+
+                <div class="min-w-0 flex-1">
+                    <Link
+                        :href="edit(post.id)"
+                        class="block truncate font-medium hover:underline"
+                        >{{ post.title }}</Link
+                    >
+                    <div
+                        class="text-muted-foreground mt-1 flex items-center gap-2 text-sm"
+                    >
+                        <Badge variant="secondary">{{
+                            categoryLabel(post.category)
+                        }}</Badge>
+                        <span>{{ status(post.published_at) }}</span>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center gap-2">
+                    <Button
+                        v-if="status(post.published_at) === 'Published'"
+                        as-child
+                        variant="ghost"
+                        size="sm"
+                    >
+                        <Link :href="postUrl(post)">View</Link>
+                    </Button>
                     <Button as-child variant="secondary" size="sm">
                         <Link :href="edit(post.id)">Edit</Link>
                     </Button>
-                    <Form
-                        v-bind="PostController.destroy.form(post.id)"
-                        :options="{ preserveScroll: true }"
+                    <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        @click="destroy(post)"
+                        >Delete</Button
                     >
-                        <Button type="submit" variant="destructive" size="sm"
-                            >Delete</Button
-                        >
-                    </Form>
                 </div>
             </div>
         </div>
 
-        <p v-else class="text-muted-foreground text-sm">No posts yet.</p>
+        <p v-else class="text-muted-foreground text-sm">Nothing here yet.</p>
     </div>
 </template>

@@ -11,9 +11,8 @@ class LibraryController extends Controller
 {
     public function full(): Response
     {
-        $chapters = collect(config('book.chapters'))
-            ->map(fn (array $chapter) => BookContent::load($chapter))
-            ->values();
+        $chapters = BookContent::chapters()
+            ->map(fn (array $chapter) => BookContent::load($chapter));
 
         return Inertia::render('library/Full', [
             'chapters' => $chapters,
@@ -22,7 +21,7 @@ class LibraryController extends Controller
 
     public function chapter(string $chapter): Response
     {
-        $chapters = collect(config('book.chapters'));
+        $chapters = BookContent::chapters();
         $index = $chapters->search(fn (array $c) => $c['slug'] === $chapter);
 
         abort_if($index === false, 404);

@@ -2,7 +2,7 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "rugsrme/stoic-recovery",
     "type": "project",
-    "description": "Stoic Recovery — companion site for the What Was Never Yours book.",
+    "description": "Sober Now We Live — companion site for the What Was Never Yours book.",
     "keywords": [
         "laravel",
         "framework"
@@ -15,7 +15,8 @@
         "laravel/fortify": "^1.37.2",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
-        "laravel/wayfinder": "^0.1.14"
+        "laravel/wayfinder": "^0.1.14",
+        "symfony/html-sanitizer": "^7.4"
     },
     "require-dev": {
         "deployer/deployer": "*",
