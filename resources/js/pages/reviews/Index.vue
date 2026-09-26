@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { BookOpen } from '@lucide/vue';
+import { computed } from 'vue';
 import PublicPagination from '@/components/PublicPagination.vue';
 import StarRating from '@/components/StarRating.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
+import { create as adminCreate, index as adminIndex } from '@/routes/admin/posts';
 import { show as reviewShow } from '@/routes/reviews';
 import type { Paginated, PostSummary } from '@/types';
 
@@ -11,6 +13,9 @@ defineProps<{
     section: 'book-review';
     posts: Paginated<PostSummary>;
 }>();
+
+const page = usePage();
+const isAdmin = computed(() => Boolean(page.props.auth.user?.is_admin));
 </script>
 
 <template>
@@ -18,9 +23,25 @@ defineProps<{
 
     <PublicLayout>
         <section class="mx-auto max-w-4xl px-7 pt-12 pb-24 lg:pt-16">
-            <p class="mb-4 text-sm font-semibold text-[var(--site-ink-soft)]">
-                Book Reviews
-            </p>
+            <div class="mb-4 flex items-center justify-between gap-4">
+                <p class="text-sm font-semibold text-[var(--site-ink-soft)]">
+                    Book Reviews
+                </p>
+                <div v-if="isAdmin" class="flex items-center gap-4 text-sm">
+                    <Link
+                        :href="adminIndex({ query: { category: section } })"
+                        class="text-[var(--site-ink-faint)] transition-colors hover:text-[var(--site-ink)]"
+                    >
+                        Manage
+                    </Link>
+                    <Link
+                        :href="adminCreate({ query: { category: section } })"
+                        class="font-semibold text-[var(--site-ink)] transition-colors hover:text-[var(--site-accent)]"
+                    >
+                        + New review
+                    </Link>
+                </div>
+            </div>
             <h1
                 class="font-serif-display text-4xl font-medium tracking-tight sm:text-5xl"
             >

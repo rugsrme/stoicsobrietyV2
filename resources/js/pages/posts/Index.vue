@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { Lock } from '@lucide/vue';
 import { computed } from 'vue';
 import PublicPagination from '@/components/PublicPagination.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { postUrl } from '@/lib/posts';
 import { formatDate } from '@/lib/utils';
+import { create as adminCreate, index as adminIndex } from '@/routes/admin/posts';
 import type { Paginated, PostCategory, PostSummary } from '@/types';
 
 const props = defineProps<{
@@ -13,6 +14,8 @@ const props = defineProps<{
     posts: Paginated<PostSummary>;
 }>();
 
+const page = usePage();
+const isAdmin = computed(() => Boolean(page.props.auth.user?.is_admin));
 const isJournal = computed(() => props.section === 'journal');
 </script>
 
@@ -21,12 +24,28 @@ const isJournal = computed(() => props.section === 'journal');
 
     <PublicLayout>
         <section class="mx-auto max-w-4xl px-7 pt-12 pb-24 lg:pt-16">
-            <p
-                class="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--site-ink-soft)]"
-            >
-                <Lock v-if="isJournal" class="size-3.5" />
-                {{ isJournal ? 'Journal · Private' : 'Reflections' }}
-            </p>
+            <div class="mb-4 flex items-center justify-between gap-4">
+                <p
+                    class="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--site-ink-soft)]"
+                >
+                    <Lock v-if="isJournal" class="size-3.5" />
+                    {{ isJournal ? 'Journal · Private' : 'Reflections' }}
+                </p>
+                <div v-if="isAdmin" class="flex items-center gap-4 text-sm">
+                    <Link
+                        :href="adminIndex({ query: { category: section } })"
+                        class="text-[var(--site-ink-faint)] transition-colors hover:text-[var(--site-ink)]"
+                    >
+                        Manage
+                    </Link>
+                    <Link
+                        :href="adminCreate({ query: { category: section } })"
+                        class="font-semibold text-[var(--site-ink)] transition-colors hover:text-[var(--site-accent)]"
+                    >
+                        + New {{ isJournal ? 'entry' : 'reflection' }}
+                    </Link>
+                </div>
+            </div>
             <h1
                 class="font-serif-display text-4xl font-medium tracking-tight sm:text-5xl"
             >
