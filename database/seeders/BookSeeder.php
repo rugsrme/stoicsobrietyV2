@@ -88,11 +88,6 @@ class BookSeeder extends Seeder
                     'source' => 'About the Author',
                 ],
             ],
-            // TODO(Quinn): swap these out for real reader/reviewer quotes as they come in.
-            // Reader reviews for the landing-page carousel, as
-            // ['quote' => ..., 'author' => ..., 'context' => ...] entries.
-            // The section stays hidden while this is empty.
-            'testimonials' => [],
             'retailer_links' => [
                 'amazon' => 'https://www.amazon.com/dp/B0HKRD9WDG',
             ],

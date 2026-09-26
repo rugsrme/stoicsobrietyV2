@@ -3,10 +3,16 @@ export type BookExcerpt = {
     source: string;
 };
 
-export type BookTestimonial = {
+export type ReaderReview = {
+    id: number;
     quote: string;
     author: string;
-    context?: string;
+    context: string | null;
+    is_published: boolean;
+    is_featured: boolean;
+    sort_order: number;
+    created_at?: string;
+    updated_at?: string;
 };
 
 export type Book = {
@@ -22,7 +28,6 @@ export type Book = {
     author_bio: string | null;
     author_photo_url: string | null;
     excerpts: BookExcerpt[] | null;
-    testimonials: BookTestimonial[] | null;
     retailer_links: Record<string, string> | null;
     price: number | null;
     price_formatted: string | null;
@@ -58,6 +63,7 @@ export type PostSummary = {
     reviewed_book_author: string | null;
     rating: number | null;
     published_at: string | null;
+    is_featured: boolean;
     author?: PostAuthor;
 };
 

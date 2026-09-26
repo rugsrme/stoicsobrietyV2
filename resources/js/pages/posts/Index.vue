@@ -6,7 +6,10 @@ import PublicPagination from '@/components/PublicPagination.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { postUrl } from '@/lib/posts';
 import { formatDate } from '@/lib/utils';
-import { create as adminCreate, index as adminIndex } from '@/routes/admin/posts';
+import {
+    create as adminCreate,
+    index as adminIndex,
+} from '@/routes/admin/posts';
 import type { Paginated, PostCategory, PostSummary } from '@/types';
 
 const props = defineProps<{

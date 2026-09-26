@@ -26,7 +26,7 @@ defineOptions({
         <aside class="shrink-0 md:w-56">
             <Link
                 :href="fullRoute()"
-                class="mb-4 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                class="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-2 text-sm transition-colors"
             >
                 <BookOpen class="size-4" />
                 Read full book
@@ -40,7 +40,7 @@ defineOptions({
                     class="rounded px-2 py-1 text-sm transition-colors"
                     :class="
                         c.slug === chapter.slug
-                            ? 'bg-accent font-medium text-accent-foreground'
+                            ? 'bg-accent text-accent-foreground font-medium'
                             : 'text-muted-foreground hover:text-foreground'
                     "
                 >
@@ -52,7 +52,7 @@ defineOptions({
         <div class="min-w-0 flex-1">
             <p
                 v-if="chapter.number"
-                class="mb-2 text-sm font-semibold text-muted-foreground"
+                class="text-muted-foreground mb-2 text-sm font-semibold"
             >
                 Chapter {{ chapter.number }}
             </p>
@@ -68,7 +68,7 @@ defineOptions({
                 <Link
                     v-if="prev"
                     :href="chapterRoute(prev.slug)"
-                    class="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    class="text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-sm transition-colors"
                 >
                     <ArrowLeft class="size-4" />
                     <span>{{ prev.title }}</span>
@@ -78,7 +78,7 @@ defineOptions({
                 <Link
                     v-if="next"
                     :href="chapterRoute(next.slug)"
-                    class="inline-flex items-center gap-2 text-right text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    class="text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-right text-sm transition-colors"
                 >
                     <span>{{ next.title }}</span>
                     <ArrowRight class="size-4" />

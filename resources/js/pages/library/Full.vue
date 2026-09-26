@@ -20,7 +20,7 @@ defineOptions({
 
     <div class="flex flex-1 flex-col gap-6 p-4 md:flex-row md:p-6">
         <aside class="shrink-0 md:w-56">
-            <p class="mb-4 text-sm font-semibold text-muted-foreground">
+            <p class="text-muted-foreground mb-4 text-sm font-semibold">
                 Contents
             </p>
             <nav class="flex flex-col gap-1 border-l pl-3">
@@ -28,16 +28,16 @@ defineOptions({
                     v-for="c in chapters"
                     :key="c.slug"
                     :href="`#${c.slug}`"
-                    class="rounded px-2 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    class="text-muted-foreground hover:text-foreground rounded px-2 py-1 text-sm transition-colors"
                 >
                     {{ c.number ? `${c.number}. ` : '' }}{{ c.title }}
                 </a>
             </nav>
-            <p class="mt-4 text-xs text-muted-foreground">
+            <p class="text-muted-foreground mt-4 text-xs">
                 Prefer reading one chapter at a time?
                 <Link
                     :href="chapterRoute(props.chapters[0].slug)"
-                    class="underline underline-offset-2 hover:text-foreground"
+                    class="hover:text-foreground underline underline-offset-2"
                 >
                     Switch to chapter view
                 </Link>
@@ -48,9 +48,9 @@ defineOptions({
             <h1 class="text-3xl font-semibold tracking-tight">
                 What Was Never Yours
             </h1>
-            <p class="mt-2 text-muted-foreground">
-                How a Rabbi, an Emperor, and a Roomful of Drunks Found the
-                Same Way Out
+            <p class="text-muted-foreground mt-2">
+                How a Rabbi, an Emperor, and a Roomful of Drunks Found the Same
+                Way Out
             </p>
 
             <article
@@ -61,7 +61,7 @@ defineOptions({
             >
                 <p
                     v-if="c.number"
-                    class="mb-2 text-sm font-semibold text-muted-foreground"
+                    class="text-muted-foreground mb-2 text-sm font-semibold"
                 >
                     Chapter {{ c.number }}
                 </p>

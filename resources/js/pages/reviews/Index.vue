@@ -5,7 +5,10 @@ import { computed } from 'vue';
 import PublicPagination from '@/components/PublicPagination.vue';
 import StarRating from '@/components/StarRating.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
-import { create as adminCreate, index as adminIndex } from '@/routes/admin/posts';
+import {
+    create as adminCreate,
+    index as adminIndex,
+} from '@/routes/admin/posts';
 import { show as reviewShow } from '@/routes/reviews';
 import type { Paginated, PostSummary } from '@/types';
 

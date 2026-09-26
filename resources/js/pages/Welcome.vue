@@ -1,16 +1,22 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { BookOpen, ChevronDown, Download } from '@lucide/vue';
-import { computed, ref } from 'vue';
+import { BookOpen, Download } from '@lucide/vue';
+import { computed } from 'vue';
 import ExcerptTicker from '@/components/ExcerptTicker.vue';
+import PostCard from '@/components/PostCard.vue';
 import TestimonialCarousel from '@/components/TestimonialCarousel.vue';
+import type { Testimonial } from '@/components/TestimonialCarousel.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { sample as bookSample, show as bookShow } from '@/routes/books';
+import { index as reflectionsIndex } from '@/routes/reflections';
+import { index as reviewsIndex } from '@/routes/reviews';
 import { index as sampleIndex } from '@/routes/sample';
-import type { Book } from '@/types';
+import type { Book, PostSummary } from '@/types';
 
 const props = defineProps<{
     book: Book | null;
+    posts: PostSummary[];
+    readerReviews: Testimonial[];
 }>();
 
 const retailerLabels: Record<string, string> = {
@@ -31,27 +37,6 @@ const retailers = computed(() => {
             url: url as string,
         }));
 });
-
-const authorParagraphs = computed(() =>
-    (props.book?.author_bio ?? '').split('\n\n').filter(Boolean),
-);
-
-// Reader reviews carousel. Hidden until real reviews are in; set to true
-// (and add testimonials in BookSeeder) to bring the section back.
-const showTestimonials = false;
-
-// Show about a paragraph's worth of the bio up front (the opening lines can
-// be very short); the rest sits behind "Read more".
-const authorExpanded = ref(false);
-
-const authorLead = computed(() => {
-    let length = 0;
-    const count = authorParagraphs.value.findIndex(
-        (p) => (length += p.length) >= 200,
-    );
-
-    return count === -1 ? authorParagraphs.value.length : count + 1;
-});
 </script>
 
 <template>
@@ -65,8 +50,10 @@ const authorLead = computed(() => {
             >
                 <div>
                     <p
-                        class="mb-[18px] text-[15px] text-[var(--site-ink-faint)]"
-                    ></p>
+                        class="mb-[18px] text-[13px] tracking-[0.2em] text-[var(--site-ink-faint)] uppercase"
+                    >
+                        Steps · Stoicism · Scripture
+                    </p>
                     <ExcerptTicker
                         v-if="book?.excerpts?.length"
                         :excerpts="book.excerpts"
@@ -98,7 +85,7 @@ const authorLead = computed(() => {
                             :href="bookShow(book.slug).url"
                             class="text-[15px] font-semibold text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
                         >
-                            View book details &rarr;
+                            About the book &rarr;
                         </Link>
                     </div>
                 </div>
@@ -130,125 +117,81 @@ const authorLead = computed(() => {
             </div>
         </section>
 
-        <!-- About the author -->
+        <!-- What the site is -->
         <section
-            v-if="book?.author_name"
-            id="about"
+            class="border-y border-[var(--site-line)] bg-[var(--site-bg-raised)] py-10"
+        >
+            <div
+                class="mx-auto grid max-w-4xl grid-cols-1 items-baseline gap-x-10 gap-y-3 px-7 sm:grid-cols-[auto_1fr]"
+            >
+                <span
+                    class="text-xs tracking-[0.2em] whitespace-nowrap text-[var(--site-ink-soft)] uppercase"
+                >
+                    A more honest way forward
+                </span>
+                <p
+                    class="font-serif-display max-w-[52ch] text-[19px] leading-normal"
+                >
+                    Reflections on recovery, and reviews of books that help,
+                    written by someone who got sober at fifty and is still
+                    working it out one day at a time.
+                </p>
+            </div>
+        </section>
+
+        <!-- Latest writing: posts ticked "Show on home page" in admin -->
+        <section
+            v-if="posts.length"
             class="border-b border-[var(--site-line)] py-17"
         >
             <div class="mx-auto max-w-4xl px-7">
-                <p
-                    class="mb-7 text-sm font-semibold text-[var(--site-ink-soft)]"
-                >
-                    About the Author
-                </p>
-
                 <div
-                    class="grid grid-cols-1 items-start gap-11 sm:grid-cols-[200px_1fr]"
+                    class="mb-7 flex flex-wrap items-baseline justify-between gap-x-5 gap-y-2"
                 >
-                    <div
-                        class="aspect-square overflow-hidden rounded border border-[var(--site-line)] bg-[var(--site-bg-raised)] sm:w-[200px]"
+                    <p
+                        class="text-sm font-semibold text-[var(--site-ink-soft)]"
                     >
-                        <img
-                            v-if="book.author_photo_url"
-                            :src="book.author_photo_url"
-                            :alt="book.author_name"
-                            class="h-full w-full object-cover"
-                        />
-                        <div
-                            v-else
-                            class="flex h-full w-full items-center justify-center"
+                        Latest writing
+                    </p>
+                    <div
+                        class="flex gap-[18px] text-sm font-semibold text-[var(--site-ink-soft)]"
+                    >
+                        <Link
+                            :href="reflectionsIndex()"
+                            class="transition-colors hover:text-[var(--site-ink)]"
+                            >All reflections &rarr;</Link
                         >
-                            <span class="font-serif-display text-xl">{{
-                                book.author_name.charAt(0)
-                            }}</span>
-                        </div>
+                        <Link
+                            :href="reviewsIndex()"
+                            class="transition-colors hover:text-[var(--site-ink)]"
+                            >All book reviews &rarr;</Link
+                        >
                     </div>
+                </div>
 
-                    <div class="max-w-[660px]">
-                        <p
-                            v-for="(paragraph, i) in authorParagraphs.slice(
-                                0,
-                                authorLead,
-                            )"
-                            :key="i"
-                            class="mb-[18px]"
-                            :class="
-                                i === 0
-                                    ? 'text-lg text-[var(--site-ink)]'
-                                    : 'text-[var(--site-ink-soft)]'
-                            "
-                        >
-                            {{ paragraph }}
-                        </p>
-
-                        <div
-                            v-if="authorParagraphs.length > authorLead"
-                            id="author-bio-more"
-                            class="grid transition-[grid-template-rows] duration-300 ease-out"
-                            :class="
-                                authorExpanded
-                                    ? 'grid-rows-[1fr]'
-                                    : 'grid-rows-[0fr]'
-                            "
-                            :inert="!authorExpanded"
-                        >
-                            <div class="overflow-hidden">
-                                <p
-                                    v-for="(
-                                        paragraph, i
-                                    ) in authorParagraphs.slice(authorLead)"
-                                    :key="i"
-                                    class="mb-[18px] text-[var(--site-ink-soft)]"
-                                >
-                                    {{ paragraph }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <button
-                            v-if="authorParagraphs.length > authorLead"
-                            type="button"
-                            class="inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
-                            aria-controls="author-bio-more"
-                            :aria-expanded="authorExpanded"
-                            @click="authorExpanded = !authorExpanded"
-                        >
-                            {{ authorExpanded ? 'Show less' : 'Read more…' }}
-                            <ChevronDown
-                                class="size-4 transition-transform"
-                                :class="authorExpanded ? 'rotate-180' : ''"
-                            />
-                        </button>
-                    </div>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <PostCard
+                        v-for="post in posts"
+                        :key="post.id"
+                        :post="post"
+                    />
                 </div>
             </div>
         </section>
 
-        <!-- Where to buy -->
+        <!-- Reader reviews: published + ticked "Show in home carousel" in admin -->
         <section
-            v-if="retailers.length"
-            id="buy"
+            v-if="readerReviews.length"
             class="border-b border-[var(--site-line)] py-17"
         >
             <div class="mx-auto max-w-4xl px-7">
                 <p
                     class="mb-7 text-sm font-semibold text-[var(--site-ink-soft)]"
                 >
-                    Where to Buy
+                    What readers are saying
                 </p>
-                <div class="flex flex-wrap gap-3.5">
-                    <a
-                        v-for="retailer in retailers"
-                        :key="retailer.key"
-                        :href="retailer.url"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center rounded border border-[var(--site-line)] bg-[var(--site-card)] px-[22px] py-3.5 text-[15px] font-semibold transition-transform hover:-translate-y-px"
-                    >
-                        {{ retailer.label }}
-                    </a>
-                </div>
+
+                <TestimonialCarousel :testimonials="readerReviews" />
             </div>
         </section>
 
@@ -292,22 +235,6 @@ const authorLead = computed(() => {
                         </a>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Reviews — hidden for now; flip showTestimonials once there are real ones -->
-        <section
-            v-if="showTestimonials && book?.testimonials?.length"
-            class="py-17"
-        >
-            <div class="mx-auto max-w-4xl px-7">
-                <p
-                    class="mb-7 text-sm font-semibold text-[var(--site-ink-soft)]"
-                >
-                    Reviews &amp; Testimonials
-                </p>
-
-                <TestimonialCarousel :testimonials="book.testimonials" />
             </div>
         </section>
     </PublicLayout>

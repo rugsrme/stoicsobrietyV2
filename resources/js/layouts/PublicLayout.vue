@@ -1,14 +1,22 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { Moon, Sun } from '@lucide/vue';
 import { dashboard, login } from '@/routes';
+import { show as bookShow } from '@/routes/books';
 import { index as journalIndex } from '@/routes/journal';
 import { index as reflectionsIndex } from '@/routes/reflections';
 import { index as reviewsIndex } from '@/routes/reviews';
 import { index as sampleIndex } from '@/routes/sample';
 import { useAppearance } from '@/composables/useAppearance';
+import { computed } from 'vue';
 
 const { resolvedAppearance, updateAppearance } = useAppearance();
+
+const page = usePage();
+
+const bookUrl = computed(() =>
+    page.props.bookSlug ? bookShow(page.props.bookSlug).url : null,
+);
 
 function toggleTheme() {
     updateAppearance(resolvedAppearance.value === 'dark' ? 'light' : 'dark');
@@ -57,6 +65,13 @@ function toggleTheme() {
 
                 <nav class="flex items-center gap-4">
                     <div class="hidden items-center gap-5 sm:flex">
+                        <Link
+                            v-if="bookUrl"
+                            :href="bookUrl"
+                            class="text-sm text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
+                        >
+                            The Book
+                        </Link>
                         <Link
                             :href="sampleIndex()"
                             class="text-sm text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
@@ -160,9 +175,16 @@ function toggleTheme() {
                             >Home</Link
                         >
                     </li>
-                    <li>
+                    <li v-if="bookUrl">
                         <Link
-                            href="/#about"
+                            :href="bookUrl"
+                            class="hover:text-[var(--site-ink)]"
+                            >The Book</Link
+                        >
+                    </li>
+                    <li v-if="bookUrl">
+                        <Link
+                            :href="`${bookUrl}#about`"
                             class="hover:text-[var(--site-ink)]"
                             >About</Link
                         >

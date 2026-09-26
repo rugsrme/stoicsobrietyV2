@@ -41,6 +41,7 @@ const form = useForm({
         ...l,
     })) as AffiliateLink[],
     published: Boolean(props.post?.published_at),
+    is_featured: props.post?.is_featured ?? false,
 });
 
 const isReview = computed(() => form.category === 'book-review');
@@ -405,6 +406,21 @@ function linkError(index: number, field: 'label' | 'url'): string | undefined {
             <Label for="published">
                 {{ post?.published_at ? 'Published' : 'Publish now' }}
             </Label>
+        </div>
+
+        <div v-if="form.category !== 'journal'" class="flex items-start gap-2">
+            <input
+                id="is_featured"
+                v-model="form.is_featured"
+                type="checkbox"
+                class="mt-0.5 size-4"
+            />
+            <div class="grid gap-1">
+                <Label for="is_featured">Show on home page</Label>
+                <p class="text-muted-foreground text-sm">
+                    Adds this to the Latest writing cards once it's published.
+                </p>
+            </div>
         </div>
 
         <div

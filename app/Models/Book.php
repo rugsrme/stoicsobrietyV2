@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $author_bio
  * @property string|null $author_photo_path
  * @property array<int, array{quote: string, source: string}>|null $excerpts
- * @property array<int, array{quote: string, author: string, context?: string}>|null $testimonials
  * @property array<string, string>|null $retailer_links
  * @property int|null $price
  * @property string $currency
@@ -53,7 +52,6 @@ class Book extends Model
         'author_bio',
         'author_photo_path',
         'excerpts',
-        'testimonials',
         'retailer_links',
         'price',
         'currency',
@@ -70,7 +68,6 @@ class Book extends Model
     {
         return [
             'excerpts' => 'array',
-            'testimonials' => 'array',
             'retailer_links' => 'array',
             'is_featured' => 'boolean',
             'published_at' => 'datetime',
@@ -115,5 +112,17 @@ class Book extends Model
         return Attribute::get(fn (): ?string => $this->price === null
             ? null
             : number_format($this->price / 100, 2));
+    }
+
+    /**
+     * The book the site is built around: the featured one, else the first published.
+     */
+    public static function current(): ?self
+    {
+        return static::query()
+            ->whereNotNull('published_at')
+            ->orderByDesc('is_featured')
+            ->orderBy('published_at')
+            ->first();
     }
 }

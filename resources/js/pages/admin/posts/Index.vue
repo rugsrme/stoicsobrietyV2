@@ -18,6 +18,7 @@ const props = defineProps<{
         | 'slug'
         | 'published_at'
         | 'cover_image_url'
+        | 'is_featured'
     > & { updated_at: string })[];
     category: PostCategory | null;
     categories: PostCategoryOption[];
@@ -142,6 +143,9 @@ function categoryLabel(value: PostCategory): string {
                             categoryLabel(post.category)
                         }}</Badge>
                         <span>{{ status(post.published_at) }}</span>
+                        <Badge v-if="post.is_featured" variant="outline"
+                            >On home page</Badge
+                        >
                     </div>
                 </div>
 

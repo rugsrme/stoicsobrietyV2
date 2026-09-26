@@ -8,6 +8,7 @@ import { toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index as ordersIndex } from '@/routes/admin/orders';
 import { index as postsIndex } from '@/routes/admin/posts';
+import { index as readerReviewsIndex } from '@/routes/admin/reader-reviews';
 import { index as usersIndex } from '@/routes/admin/users';
 import type { NavItem } from '@/types';
 
@@ -20,6 +21,7 @@ const sidebarNavItems: NavItem[] = [
     { title: 'Users', href: usersIndex() },
     { title: 'Orders', href: ordersIndex() },
     { title: 'Writing', href: postsIndex() },
+    { title: 'Reader reviews', href: readerReviewsIndex() },
 ];
 
 const { isCurrentOrParentUrl } = useCurrentUrl();

@@ -331,3 +331,33 @@ test('the editor offers all three sections', function () {
             ->where('categories', fn ($categories) => collect($categories)->pluck('value')->all() === ['reflection', 'book-review', 'journal'])
         );
 });
+
+test('a post can be ticked to show on the home page', function () {
+    $user = User::factory()->admin()->create();
+
+    $this->actingAs($user)->post(route('admin.posts.store'), [
+        'category' => 'reflection',
+        'title' => 'Front Page',
+        'slug' => 'front-page',
+        'body' => 'Body.',
+        'published' => true,
+        'is_featured' => true,
+    ])->assertRedirect();
+
+    expect(Post::where('slug', 'front-page')->first()->is_featured)->toBeTrue();
+});
+
+test('journal entries can never be put on the home page', function () {
+    $user = User::factory()->admin()->create();
+
+    $this->actingAs($user)->post(route('admin.posts.store'), [
+        'category' => 'journal',
+        'title' => 'Private',
+        'slug' => 'private',
+        'body' => 'Body.',
+        'published' => true,
+        'is_featured' => true,
+    ])->assertRedirect();
+
+    expect(Post::where('slug', 'private')->first()->is_featured)->toBeFalse();
+});

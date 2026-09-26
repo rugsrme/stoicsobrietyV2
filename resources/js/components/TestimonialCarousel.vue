@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ChevronLeft, ChevronRight } from '@lucide/vue';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 
 export type Testimonial = {
     quote: string;
     author: string;
-    context?: string;
+    context?: string | null;
 };
 
 const props = withDefaults(
@@ -14,7 +13,7 @@ const props = withDefaults(
         intervalMs?: number;
     }>(),
     {
-        intervalMs: 6000,
+        intervalMs: 6500,
     },
 );
 
@@ -41,14 +40,6 @@ function goTo(index: number) {
     start(); // restart the clock so a manual click isn't immediately overridden
 }
 
-function next() {
-    goTo((active.value + 1) % props.testimonials.length);
-}
-
-function prev() {
-    goTo((active.value - 1 + props.testimonials.length) % props.testimonials.length);
-}
-
 onMounted(start);
 onBeforeUnmount(stop);
 </script>
@@ -59,59 +50,52 @@ onBeforeUnmount(stop);
         @mouseenter="stop"
         @mouseleave="start"
     >
-        <div class="flex w-full items-center justify-center gap-3 sm:gap-5">
-            <button
-                type="button"
-                class="shrink-0 rounded-full border border-[var(--site-line)] p-2 text-[var(--site-ink-faint)] transition-colors hover:text-[var(--site-ink)] disabled:pointer-events-none disabled:opacity-30"
-                :disabled="testimonials.length < 2"
-                aria-label="Previous testimonial"
-                @click="prev"
-            >
-                <ChevronLeft class="size-4" />
-            </button>
+        <span
+            class="font-serif-display mb-[18px] block text-[56px] leading-[0.6] text-[var(--site-accent)] opacity-50"
+            aria-hidden="true"
+            >&ldquo;</span
+        >
 
-            <div class="relative w-full flex-1 overflow-hidden">
-                <Transition name="quote-fade" mode="out-in">
-                    <blockquote
-                        :key="active"
-                        class="flex min-h-[160px] flex-col items-center justify-center rounded border border-[var(--site-line)] bg-[var(--site-card)] px-7 py-8 text-center sm:px-9 sm:py-[34px]"
-                    >
-                        <p
-                            class="font-serif-display text-lg leading-relaxed text-[var(--site-ink)]"
-                        >
-                            &ldquo;{{ testimonials[active].quote }}&rdquo;
-                        </p>
-                        <footer
-                            class="mt-4 text-[13.5px] text-[var(--site-ink-faint)]"
-                        >
-                            {{ testimonials[active].author
-                            }}<span v-if="testimonials[active].context">
-                                &mdash; {{ testimonials[active].context }}</span
-                            >
-                        </footer>
-                    </blockquote>
-                </Transition>
-            </div>
-
-            <button
-                type="button"
-                class="shrink-0 rounded-full border border-[var(--site-line)] p-2 text-[var(--site-ink-faint)] transition-colors hover:text-[var(--site-ink)] disabled:pointer-events-none disabled:opacity-30"
-                :disabled="testimonials.length < 2"
-                aria-label="Next testimonial"
-                @click="next"
+        <!-- All quotes share one grid cell so the height never jumps. -->
+        <div class="grid w-full">
+            <blockquote
+                v-for="(t, i) in testimonials"
+                :key="i"
+                class="quote-item col-start-1 row-start-1 px-3 py-2 text-center"
+                :class="
+                    i === active
+                        ? 'opacity-100'
+                        : 'pointer-events-none opacity-0'
+                "
+                :aria-hidden="i !== active"
             >
-                <ChevronRight class="size-4" />
-            </button>
+                <p
+                    class="font-serif-display text-xl leading-normal text-balance text-[var(--site-ink)] sm:text-2xl"
+                >
+                    {{ t.quote }}
+                </p>
+                <footer
+                    class="mt-[18px] text-[13.5px] text-[var(--site-ink-faint)]"
+                >
+                    {{ t.author
+                    }}<span v-if="t.context"> &mdash; {{ t.context }}</span>
+                </footer>
+            </blockquote>
         </div>
 
-        <div v-if="testimonials.length > 1" class="mt-5 flex gap-2">
+        <div v-if="testimonials.length > 1" class="mt-6 flex gap-2">
             <button
                 v-for="(t, i) in testimonials"
                 :key="i"
                 type="button"
                 class="h-2 w-2 rounded-full transition-colors"
-                :class="i === active ? 'bg-[var(--site-accent)]' : 'bg-[var(--site-line)]'"
-                :aria-label="`Go to testimonial ${i + 1}`"
+                :class="
+                    i === active
+                        ? 'bg-[var(--site-accent)]'
+                        : 'bg-[var(--site-line)]'
+                "
+                :aria-label="`Show review ${i + 1}`"
+                :aria-current="i === active"
                 @click="goTo(i)"
             />
         </div>
@@ -119,13 +103,13 @@ onBeforeUnmount(stop);
 </template>
 
 <style scoped>
-.quote-fade-enter-active,
-.quote-fade-leave-active {
-    transition: opacity 0.5s ease;
+.quote-item {
+    transition: opacity 0.6s ease;
 }
 
-.quote-fade-enter-from,
-.quote-fade-leave-to {
-    opacity: 0;
+@media (prefers-reduced-motion: reduce) {
+    .quote-item {
+        transition: none;
+    }
 }
 </style>

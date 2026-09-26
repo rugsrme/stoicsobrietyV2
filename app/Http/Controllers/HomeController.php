@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\Post;
+use App\Models\ReaderReview;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -10,14 +12,10 @@ class HomeController extends Controller
 {
     public function index(): Response
     {
-        $book = Book::query()
-            ->whereNotNull('published_at')
-            ->orderByDesc('is_featured')
-            ->orderBy('published_at')
-            ->first();
-
         return Inertia::render('Welcome', [
-            'book' => $book,
+            'book' => Book::current(),
+            'posts' => Post::forHomePage(),
+            'readerReviews' => ReaderReview::query()->forCarousel()->get(['id', 'quote', 'author', 'context']),
         ]);
     }
 }

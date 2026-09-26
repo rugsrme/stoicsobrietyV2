@@ -35,33 +35,34 @@ onBeforeUnmount(stop);
 </script>
 
 <template>
-    <div
-        class="relative min-h-[3.5em]"
-        @mouseenter="stop"
-        @mouseleave="start"
-    >
-        <Transition name="ticker-fade" mode="out-in">
-            <p
-                :key="active"
-                class="font-serif-display text-[15px] leading-relaxed text-[var(--site-ink-faint)] italic"
+    <!--
+        Every excerpt sits in the same grid cell, so the box is always as tall
+        as the longest one and the content below never jumps as they rotate.
+    -->
+    <div class="grid" @mouseenter="stop" @mouseleave="start">
+        <p
+            v-for="(excerpt, i) in excerpts"
+            :key="i"
+            class="ticker-item font-serif-display col-start-1 row-start-1 text-[15px] leading-relaxed text-[var(--site-ink-faint)] italic"
+            :class="i === active ? 'opacity-100' : 'opacity-0'"
+            :aria-hidden="i !== active"
+        >
+            &ldquo;{{ excerpt.quote }}&rdquo;
+            <span v-if="excerpt.source" class="not-italic">
+                &mdash; {{ excerpt.source }}</span
             >
-                &ldquo;{{ excerpts[active].quote }}&rdquo;
-                <span v-if="excerpts[active].source" class="not-italic">
-                    &mdash; {{ excerpts[active].source }}</span
-                >
-            </p>
-        </Transition>
+        </p>
     </div>
 </template>
 
 <style scoped>
-.ticker-fade-enter-active,
-.ticker-fade-leave-active {
+.ticker-item {
     transition: opacity 0.7s ease;
 }
 
-.ticker-fade-enter-from,
-.ticker-fade-leave-to {
-    opacity: 0;
+@media (prefers-reduced-motion: reduce) {
+    .ticker-item {
+        transition: none;
+    }
 }
 </style>

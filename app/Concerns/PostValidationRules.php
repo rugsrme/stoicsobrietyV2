@@ -41,6 +41,7 @@ trait PostValidationRules
             'affiliate_links.*.label' => ['required', 'string', 'max:60'],
             'affiliate_links.*.url' => ['required', 'url:http,https', 'max:2048'],
             'published' => ['boolean'],
+            'is_featured' => ['boolean'],
         ];
     }
 }

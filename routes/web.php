@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
+use App\Http\Controllers\Admin\ReaderReviewController as AdminReaderReviewController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\DashboardController;
@@ -66,6 +67,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::patch('users/{user}', [AdminUserController::class, 'update'])->name('users.update');
 
             Route::resource('orders', AdminOrderController::class)->except('show');
+            Route::resource('reader-reviews', AdminReaderReviewController::class)->except('show');
         });
     });
 });

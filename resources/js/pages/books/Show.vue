@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { Download } from '@lucide/vue';
-import { computed } from 'vue';
+import { BookOpen, ChevronDown, Download } from '@lucide/vue';
+import { computed, ref } from 'vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { sample as bookSample } from '@/routes/books';
+import { index as sampleIndex } from '@/routes/sample';
 import type { Book } from '@/types';
 
 const props = defineProps<{
@@ -32,6 +33,19 @@ const retailers = computed(() => {
 const authorParagraphs = computed(() =>
     (props.book.author_bio ?? '').split('\n\n').filter(Boolean),
 );
+
+// Show about a paragraph's worth of the bio up front (the opening lines can
+// be very short); the rest sits behind "Read more".
+const authorExpanded = ref(false);
+
+const authorLead = computed(() => {
+    let length = 0;
+    const count = authorParagraphs.value.findIndex(
+        (p) => (length += p.length) >= 200,
+    );
+
+    return count === -1 ? authorParagraphs.value.length : count + 1;
+});
 
 const descriptionParagraphs = computed(() =>
     (props.book.description ?? '').split('\n\n').filter(Boolean),
@@ -161,25 +175,131 @@ const descriptionParagraphs = computed(() =>
                 </div>
             </div>
 
+            <div class="mt-16 border-t border-[var(--site-line)] pt-14">
+                <p
+                    class="mb-7 text-sm font-semibold text-[var(--site-ink-soft)]"
+                >
+                    Read Before You Buy
+                </p>
+                <div
+                    class="flex flex-wrap items-center justify-between gap-8 rounded border border-[var(--site-line)] bg-[var(--site-card)] px-9 py-[34px]"
+                >
+                    <div>
+                        <h3
+                            class="font-serif-display mb-2 text-[22px] font-medium"
+                        >
+                            Read the first three chapters free
+                        </h3>
+                        <p class="max-w-[46ch] text-[var(--site-ink-soft)]">
+                            The opening of the book and Chapters 1–3, right here
+                            in your browser. No account needed.
+                        </p>
+                    </div>
+                    <Link
+                        :href="sampleIndex()"
+                        class="inline-flex items-center gap-2 rounded bg-[var(--site-accent)] px-[22px] py-3 text-[15px] font-semibold whitespace-nowrap text-[var(--site-accent-ink)] transition-transform hover:-translate-y-px"
+                    >
+                        <BookOpen class="size-4" />
+                        Start reading
+                    </Link>
+                </div>
+            </div>
+
             <div
                 v-if="book.author_name"
-                class="mt-16 border-t border-[var(--site-line)] pt-14"
+                id="about"
+                class="mt-16 scroll-mt-24 border-t border-[var(--site-line)] pt-14"
             >
                 <p
                     class="mb-7 text-sm font-semibold text-[var(--site-ink-soft)]"
                 >
-                    About the author
+                    About the Author
                 </p>
-                <h2 class="font-serif-display text-2xl font-medium">
-                    {{ book.author_name }}
-                </h2>
-                <p
-                    v-for="(paragraph, i) in authorParagraphs"
-                    :key="i"
-                    class="mt-4 max-w-2xl leading-relaxed text-[var(--site-ink-soft)]"
+
+                <div
+                    class="grid grid-cols-1 items-start gap-11 sm:grid-cols-[200px_1fr]"
                 >
-                    {{ paragraph }}
-                </p>
+                    <div
+                        class="aspect-square overflow-hidden rounded border border-[var(--site-line)] bg-[var(--site-bg-raised)] sm:w-[200px]"
+                    >
+                        <img
+                            v-if="book.author_photo_url"
+                            :src="book.author_photo_url"
+                            :alt="book.author_name"
+                            class="h-full w-full object-cover"
+                        />
+                        <div
+                            v-else
+                            class="flex h-full w-full items-center justify-center"
+                        >
+                            <span class="font-serif-display text-xl">{{
+                                book.author_name.charAt(0)
+                            }}</span>
+                        </div>
+                    </div>
+
+                    <div class="max-w-[660px]">
+                        <h2
+                            class="font-serif-display mb-4 text-2xl font-medium"
+                        >
+                            {{ book.author_name }}
+                        </h2>
+                        <p
+                            v-for="(paragraph, i) in authorParagraphs.slice(
+                                0,
+                                authorLead,
+                            )"
+                            :key="i"
+                            class="mb-[18px]"
+                            :class="
+                                i === 0
+                                    ? 'text-lg text-[var(--site-ink)]'
+                                    : 'text-[var(--site-ink-soft)]'
+                            "
+                        >
+                            {{ paragraph }}
+                        </p>
+
+                        <div
+                            v-if="authorParagraphs.length > authorLead"
+                            id="author-bio-more"
+                            class="grid transition-[grid-template-rows] duration-300 ease-out"
+                            :class="
+                                authorExpanded
+                                    ? 'grid-rows-[1fr]'
+                                    : 'grid-rows-[0fr]'
+                            "
+                            :inert="!authorExpanded"
+                        >
+                            <div class="overflow-hidden">
+                                <p
+                                    v-for="(
+                                        paragraph, i
+                                    ) in authorParagraphs.slice(authorLead)"
+                                    :key="i"
+                                    class="mb-[18px] text-[var(--site-ink-soft)]"
+                                >
+                                    {{ paragraph }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <button
+                            v-if="authorParagraphs.length > authorLead"
+                            type="button"
+                            class="inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--site-ink-soft)] transition-colors hover:text-[var(--site-ink)]"
+                            aria-controls="author-bio-more"
+                            :aria-expanded="authorExpanded"
+                            @click="authorExpanded = !authorExpanded"
+                        >
+                            {{ authorExpanded ? 'Show less' : 'Read more…' }}
+                            <ChevronDown
+                                class="size-4 transition-transform"
+                                :class="authorExpanded ? 'rotate-180' : ''"
+                            />
+                        </button>
+                    </div>
+                </div>
             </div>
         </section>
     </PublicLayout>

@@ -14,23 +14,21 @@ import PublicLayout from '@/layouts/PublicLayout.vue';
                 Affiliate Disclosure
             </h1>
 
-            <div
-                class="mt-12 space-y-6 leading-relaxed text-current/80"
-            >
+            <div class="mt-12 space-y-6 leading-relaxed text-current/80">
                 <p>
-                    Some links on this website are affiliate links. This
-                    means that if you follow one of these links and make a
-                    qualifying purchase, I may receive a small commission at
-                    no additional cost to you.
+                    Some links on this website are affiliate links. This means
+                    that if you follow one of these links and make a qualifying
+                    purchase, I may receive a small commission at no additional
+                    cost to you.
                 </p>
 
                 <p>As an Amazon Associate I earn from qualifying purchases.</p>
 
                 <p>
-                    My recommendations and reviews are based on my own
-                    opinions and experiences. Affiliate relationships do not
-                    determine what I recommend, what I say about a book or
-                    resource, or whether my review is positive or negative.
+                    My recommendations and reviews are based on my own opinions
+                    and experiences. Affiliate relationships do not determine
+                    what I recommend, what I say about a book or resource, or
+                    whether my review is positive or negative.
                 </p>
 
                 <p>
@@ -42,8 +40,8 @@ import PublicLayout from '@/layouts/PublicLayout.vue';
                 </p>
 
                 <p>
-                    Affiliate commissions help support the cost of
-                    maintaining this website and creating its content.
+                    Affiliate commissions help support the cost of maintaining
+                    this website and creating its content.
                 </p>
             </div>
         </article>

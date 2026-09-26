@@ -7,6 +7,7 @@ use App\Support\PostHtml;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,6 +29,7 @@ use Illuminate\Support\Facades\Storage;
  * @property int|null $rating
  * @property array<int, array{label: string, url: string}>|null $affiliate_links
  * @property Carbon|null $published_at
+ * @property bool $is_featured
  */
 class Post extends Model
 {
@@ -52,6 +54,7 @@ class Post extends Model
         'rating',
         'affiliate_links',
         'published_at',
+        'is_featured',
     ];
 
     /**
@@ -64,6 +67,7 @@ class Post extends Model
             'affiliate_links' => 'array',
             'rating' => 'integer',
             'published_at' => 'datetime',
+            'is_featured' => 'boolean',
         ];
     }
 
@@ -130,6 +134,32 @@ class Post extends Model
         });
 
         return $posts;
+    }
+
+    /**
+     * Published reflections and book reviews for the home page cards: the
+     * ones ticked "Show on home page" (up to two rows of three), or the
+     * latest three when none are.
+     *
+     * @return Collection<int, static>
+     */
+    public static function forHomePage(): Collection
+    {
+        $query = fn () => static::query()
+            ->published()
+            ->whereIn('category', [PostCategory::Reflection, PostCategory::BookReview])
+            ->with('author:id,name,display_name')
+            ->latest('published_at');
+
+        $posts = $query()->where('is_featured', true)->limit(6)->get();
+
+        if ($posts->isEmpty()) {
+            $posts = $query()->limit(3)->get();
+        }
+
+        return $posts->each(function (self $post) {
+            $post->append('summary')->makeHidden('body');
+        });
     }
 
     /**

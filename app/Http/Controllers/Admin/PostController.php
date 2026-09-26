@@ -25,7 +25,7 @@ class PostController extends Controller
         $posts = Post::query()
             ->when($category, fn ($query) => $query->inCategory($category))
             ->latest('updated_at')
-            ->get(['id', 'category', 'title', 'slug', 'cover_image_path', 'published_at', 'updated_at']);
+            ->get(['id', 'category', 'title', 'slug', 'cover_image_path', 'published_at', 'is_featured', 'updated_at']);
 
         return Inertia::render('admin/posts/Index', [
             'posts' => $posts,
@@ -113,6 +113,8 @@ class PostController extends Controller
             'reviewed_book_author' => $isReview ? ($data['reviewed_book_author'] ?? null) : null,
             'rating' => $isReview ? ($data['rating'] ?? null) : null,
             'affiliate_links' => $isReview ? array_values($data['affiliate_links'] ?? []) : null,
+            // Journal entries are private, so they can never go on the home page.
+            'is_featured' => $category->isPublic() && $request->boolean('is_featured'),
         ]);
 
         if ($request->hasFile('cover_image') || $request->boolean('remove_cover_image')) {
