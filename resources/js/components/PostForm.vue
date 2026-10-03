@@ -52,6 +52,8 @@ const form = useForm({
 const isReview = computed(() => form.category === 'book-review');
 
 // Networks without META_* settings on the server are shown but can't be ticked.
+// The checkboxes get neutral ids: ad blockers hide elements with ids like
+// "share_facebook".
 const networks = computed(() => [
     {
         name: 'Facebook',
@@ -450,7 +452,7 @@ function linkError(index: number, field: 'label' | 'url'): string | undefined {
         >
             <legend class="px-1 text-sm font-semibold">Share</legend>
 
-            <template v-for="network in networks" :key="network.field">
+            <template v-for="(network, i) in networks" :key="network.field">
                 <p
                     v-if="network.shared"
                     class="text-muted-foreground flex items-center gap-2 text-sm"
@@ -460,14 +462,14 @@ function linkError(index: number, field: 'label' | 'url'): string | undefined {
                 </p>
                 <div v-else class="flex items-center gap-2">
                     <input
-                        :id="network.field"
+                        :id="`autopost-${i}`"
                         v-model="form[network.field]"
                         type="checkbox"
                         class="size-4"
                         :disabled="!network.enabled"
                     />
                     <Label
-                        :for="network.field"
+                        :for="`autopost-${i}`"
                         :class="{ 'text-muted-foreground': !network.enabled }"
                     >
                         Post to {{ network.name }}
