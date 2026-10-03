@@ -44,18 +44,28 @@ const form = useForm({
     })) as AffiliateLink[],
     published: Boolean(props.post?.published_at),
     is_featured: props.post?.is_featured ?? false,
-    // Ticked by default, so publishing shares it unless told otherwise.
-    share_facebook: !props.post?.facebook_post_id,
-    share_instagram: !props.post?.instagram_media_id,
+    // Facebook is opt-in; Instagram is shared unless unticked.
+    share_facebook: false,
+    share_instagram: props.social.instagram && !props.post?.instagram_media_id,
 });
 
 const isReview = computed(() => form.category === 'book-review');
 
-const canShare = computed(
-    () =>
-        form.category !== 'journal' &&
-        (props.social.facebook || props.social.instagram),
-);
+// Networks without META_* settings on the server are shown but can't be ticked.
+const networks = computed(() => [
+    {
+        name: 'Facebook',
+        field: 'share_facebook' as const,
+        enabled: props.social.facebook,
+        shared: Boolean(props.post?.facebook_post_id),
+    },
+    {
+        name: 'Instagram',
+        field: 'share_instagram' as const,
+        enabled: props.social.instagram,
+        shared: Boolean(props.post?.instagram_media_id),
+    },
+]);
 
 const sectionHint: Record<PostCategory, string> = {
     reflection: 'Appears under Reflections on the public site.',
@@ -434,43 +444,37 @@ function linkError(index: number, field: 'label' | 'url'): string | undefined {
             </div>
         </div>
 
-        <fieldset v-if="canShare" class="grid gap-3 rounded-lg border p-5">
+        <fieldset
+            v-if="form.category !== 'journal'"
+            class="grid gap-3 rounded-lg border p-5"
+        >
             <legend class="px-1 text-sm font-semibold">Share</legend>
 
-            <template v-if="social.facebook">
+            <template v-for="network in networks" :key="network.field">
                 <p
-                    v-if="post?.facebook_post_id"
-                    class="text-muted-foreground flex items-center gap-2 text-sm"
-                >
-                    <Check class="size-4 text-emerald-600" /> Shared to Facebook
-                </p>
-                <div v-else class="flex items-center gap-2">
-                    <input
-                        id="share_facebook"
-                        v-model="form.share_facebook"
-                        type="checkbox"
-                        class="size-4"
-                    />
-                    <Label for="share_facebook">Post to Facebook</Label>
-                </div>
-            </template>
-
-            <template v-if="social.instagram">
-                <p
-                    v-if="post?.instagram_media_id"
+                    v-if="network.shared"
                     class="text-muted-foreground flex items-center gap-2 text-sm"
                 >
                     <Check class="size-4 text-emerald-600" /> Shared to
-                    Instagram
+                    {{ network.name }}
                 </p>
                 <div v-else class="flex items-center gap-2">
                     <input
-                        id="share_instagram"
-                        v-model="form.share_instagram"
+                        :id="network.field"
+                        v-model="form[network.field]"
                         type="checkbox"
                         class="size-4"
+                        :disabled="!network.enabled"
                     />
-                    <Label for="share_instagram">Post to Instagram</Label>
+                    <Label
+                        :for="network.field"
+                        :class="{ 'text-muted-foreground': !network.enabled }"
+                    >
+                        Post to {{ network.name }}
+                        <span v-if="!network.enabled" class="font-normal"
+                            >(not set up on this server)</span
+                        >
+                    </Label>
                 </div>
             </template>
 

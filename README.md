@@ -118,8 +118,9 @@ vendor/bin/dep deploy
 
 ## Sharing to Facebook and Instagram
 
-Publishing a reflection or book review posts it to the Facebook Page and Instagram automatically
-(the editor has a "Post to Facebook / Instagram" box for each, ticked by default). Each post goes
+Publishing a reflection or book review can post it to the Facebook Page and Instagram
+automatically. The editor has a box for each: "Post to Facebook" starts unticked and "Post to
+Instagram" starts ticked. Each post goes
 out once; if Meta rejects it, the reason shows in the editor and saving again retries. The
 sharing runs after the page responds, so no queue worker is needed.
 
