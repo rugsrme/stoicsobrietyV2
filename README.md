@@ -115,3 +115,42 @@ Then deploy with:
 ```bash
 vendor/bin/dep deploy
 ```
+
+## Sharing to Facebook and Instagram
+
+Publishing a reflection or book review posts it to the Facebook Page and Instagram automatically
+(the editor has a "Post to Facebook / Instagram" box for each, ticked by default). Each post goes
+out once; if Meta rejects it, the reason shows in the editor and saving again retries. The
+sharing runs after the page responds, so no queue worker is needed.
+
+Facebook shows a link card built from the post's title, summary and cover image. Instagram gets
+the cover (or the site image) on a 4:5 dark background, with the summary and the post's address
+as the caption, because Instagram captions can't hold clickable links.
+
+One-time setup:
+
+1. The Instagram account must be a **Business or Creator** account, linked to the Facebook Page
+   (Instagram app → Settings → Account type and tools / Linked accounts).
+2. At [developers.facebook.com](https://developers.facebook.com/apps) create an app of type
+   **Business** and add the **Facebook Login for Business** and **Instagram** products.
+3. In the [Graph API Explorer](https://developers.facebook.com/tools/explorer), choose the app
+   and request a User token with `pages_show_list`, `pages_read_engagement`,
+   `pages_manage_posts`, `business_management`, `instagram_basic` and
+   `instagram_content_publish`.
+4. Swap it for a long-lived token in the [Access Token Debugger](https://developers.facebook.com/tools/debug/accesstoken)
+   ("Extend Access Token"), then in the Explorer, with that token, run
+   `me/accounts?fields=id,name,access_token,instagram_business_account`. The Page's
+   `access_token` from there does not expire.
+5. Put the values in the server's `.env`:
+
+   ```dotenv
+   META_PAGE_ID=            # the Page's "id"
+   META_PAGE_ACCESS_TOKEN=  # the Page's "access_token"
+   META_INSTAGRAM_ACCOUNT_ID=  # instagram_business_account.id (leave empty to skip Instagram)
+   ```
+
+   then run `php artisan config:cache`.
+
+Leave a network's ID empty to switch it off. The checkboxes only appear for networks that are set
+up. To check how a post's link card looks, paste its address into Facebook's
+[Sharing Debugger](https://developers.facebook.com/tools/debug/).

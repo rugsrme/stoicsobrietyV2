@@ -2,6 +2,7 @@
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, ExternalLink } from '@lucide/vue';
 import { computed } from 'vue';
+import ShareButtons from '@/components/ShareButtons.vue';
 import StarRating from '@/components/StarRating.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { formatDate } from '@/lib/utils';
@@ -126,8 +127,13 @@ const links = computed(() => props.post.affiliate_links ?? []);
                 v-html="post.body"
             />
 
+            <ShareButtons
+                :title="post.title"
+                class="mt-14 border-t border-[var(--site-line)] pt-6"
+            />
+
             <footer
-                class="mt-14 border-t border-[var(--site-line)] pt-6 text-sm text-[var(--site-ink-faint)]"
+                class="mt-8 border-t border-[var(--site-line)] pt-6 text-sm text-[var(--site-ink-faint)]"
             >
                 <p v-if="links.length">
                     Some links on this page are affiliate links: if you buy

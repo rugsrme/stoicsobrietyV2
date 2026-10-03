@@ -45,6 +45,12 @@ export type PostCategoryOption = {
     plural: string;
 };
 
+/** Which networks are set up for automatic sharing (services.meta). */
+export type SocialNetworks = {
+    facebook: boolean;
+    instagram: boolean;
+};
+
 export type AffiliateLink = {
     label: string;
     url: string;
@@ -77,4 +83,8 @@ export type Post = PostSummary & {
     body: string;
     affiliate_links: AffiliateLink[] | null;
     author: PostAuthor;
+    /** Only present in the admin editor. */
+    facebook_post_id?: string | null;
+    instagram_media_id?: string | null;
+    social_share_error?: string | null;
 };

@@ -5,11 +5,12 @@ import Heading from '@/components/Heading.vue';
 import PostForm from '@/components/PostForm.vue';
 import { postNoun, postUrl } from '@/lib/posts';
 import { index } from '@/routes/admin/posts';
-import type { Post, PostCategoryOption } from '@/types';
+import type { Post, PostCategoryOption, SocialNetworks } from '@/types';
 
 defineProps<{
     post: Post;
     categories: PostCategoryOption[];
+    social: SocialNetworks;
 }>();
 
 defineOptions({
@@ -40,5 +41,10 @@ defineOptions({
         </Link>
     </div>
 
-    <PostForm :key="post.id" :post="post" :categories="categories" />
+    <PostForm
+        :key="post.id"
+        :post="post"
+        :categories="categories"
+        :social="social"
+    />
 </template>

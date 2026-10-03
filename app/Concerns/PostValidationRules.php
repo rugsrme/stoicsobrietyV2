@@ -42,6 +42,8 @@ trait PostValidationRules
             'affiliate_links.*.url' => ['required', 'url:http,https', 'max:2048'],
             'published' => ['boolean'],
             'is_featured' => ['boolean'],
+            'share_facebook' => ['boolean'],
+            'share_instagram' => ['boolean'],
         ];
     }
 }

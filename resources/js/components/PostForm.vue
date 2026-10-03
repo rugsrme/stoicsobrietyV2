@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import { ImageUp, Plus, Star, Trash2, X } from '@lucide/vue';
+import { Check, ImageUp, Plus, Star, Trash2, X } from '@lucide/vue';
 import { computed, onBeforeUnmount, ref } from 'vue';
 import PostController from '@/actions/App/Http/Controllers/Admin/PostController';
 import InputError from '@/components/InputError.vue';
@@ -16,12 +16,14 @@ import type {
     Post,
     PostCategory,
     PostCategoryOption,
+    SocialNetworks,
 } from '@/types';
 
 const props = defineProps<{
     categories: PostCategoryOption[];
     post?: Post;
     initialCategory?: PostCategory;
+    social: SocialNetworks;
 }>();
 
 const form = useForm({
@@ -42,9 +44,18 @@ const form = useForm({
     })) as AffiliateLink[],
     published: Boolean(props.post?.published_at),
     is_featured: props.post?.is_featured ?? false,
+    // Ticked by default, so publishing shares it unless told otherwise.
+    share_facebook: !props.post?.facebook_post_id,
+    share_instagram: !props.post?.instagram_media_id,
 });
 
 const isReview = computed(() => form.category === 'book-review');
+
+const canShare = computed(
+    () =>
+        form.category !== 'journal' &&
+        (props.social.facebook || props.social.instagram),
+);
 
 const sectionHint: Record<PostCategory, string> = {
     reflection: 'Appears under Reflections on the public site.',
@@ -422,6 +433,61 @@ function linkError(index: number, field: 'label' | 'url'): string | undefined {
                 </p>
             </div>
         </div>
+
+        <fieldset v-if="canShare" class="grid gap-3 rounded-lg border p-5">
+            <legend class="px-1 text-sm font-semibold">Share</legend>
+
+            <template v-if="social.facebook">
+                <p
+                    v-if="post?.facebook_post_id"
+                    class="text-muted-foreground flex items-center gap-2 text-sm"
+                >
+                    <Check class="size-4 text-emerald-600" /> Shared to Facebook
+                </p>
+                <div v-else class="flex items-center gap-2">
+                    <input
+                        id="share_facebook"
+                        v-model="form.share_facebook"
+                        type="checkbox"
+                        class="size-4"
+                    />
+                    <Label for="share_facebook">Post to Facebook</Label>
+                </div>
+            </template>
+
+            <template v-if="social.instagram">
+                <p
+                    v-if="post?.instagram_media_id"
+                    class="text-muted-foreground flex items-center gap-2 text-sm"
+                >
+                    <Check class="size-4 text-emerald-600" /> Shared to
+                    Instagram
+                </p>
+                <div v-else class="flex items-center gap-2">
+                    <input
+                        id="share_instagram"
+                        v-model="form.share_instagram"
+                        type="checkbox"
+                        class="size-4"
+                    />
+                    <Label for="share_instagram">Post to Instagram</Label>
+                </div>
+            </template>
+
+            <p class="text-muted-foreground text-sm">
+                Goes out once, when it's published. Instagram gets the
+                {{ isReview ? 'book cover' : 'featured image' }} (or the site
+                image) with the summary as its caption.
+            </p>
+
+            <p
+                v-if="post?.social_share_error"
+                class="text-sm whitespace-pre-line text-red-600 dark:text-red-400"
+            >
+                Last attempt failed — save again to retry.
+                {{ post.social_share_error }}
+            </p>
+        </fieldset>
 
         <div
             class="bg-background/95 sticky bottom-0 -mx-1 flex items-center gap-4 border-t px-1 py-4 backdrop-blur"

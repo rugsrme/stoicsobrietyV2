@@ -46,9 +46,20 @@ abstract class PostSectionController extends Controller
 
         $post->load('author:id,name,display_name');
 
-        return Inertia::render($this->pages().'/Show', [
+        $response = Inertia::render($this->pages().'/Show', [
             'section' => $this->category()->value,
             'post' => $post,
         ]);
+
+        // Link previews on Facebook and elsewhere. Crawlers don't run the
+        // page's JavaScript, so these go into the server-rendered <head>.
+        return $post->category->isPublic()
+            ? $response->withViewData('linkPreview', [
+                'type' => 'article',
+                'title' => $post->title,
+                'description' => $post->summary,
+                'image' => $post->cover_image_url,
+            ])
+            : $response;
     }
 }

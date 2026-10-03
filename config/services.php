@@ -28,6 +28,16 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // Automatic sharing of reflections and book reviews to the Facebook Page
+    // and its linked Instagram professional account. Leave a network's IDs
+    // empty to switch it off.
+    'meta' => [
+        'graph_version' => env('META_GRAPH_VERSION', 'v24.0'),
+        'page_id' => env('META_PAGE_ID'),
+        'page_access_token' => env('META_PAGE_ACCESS_TOKEN'),
+        'instagram_account_id' => env('META_INSTAGRAM_ACCOUNT_ID'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

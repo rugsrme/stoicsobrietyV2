@@ -2,6 +2,7 @@
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { Lock } from '@lucide/vue';
 import { computed } from 'vue';
+import ShareButtons from '@/components/ShareButtons.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { postIndexUrl } from '@/lib/posts';
 import { formatDate } from '@/lib/utils';
@@ -77,6 +78,12 @@ const isJournal = computed(() => props.section === 'journal');
             <div
                 class="rich-content mt-10 text-[17px] text-[var(--site-ink-soft)]"
                 v-html="post.body"
+            />
+
+            <ShareButtons
+                v-if="!isJournal"
+                :title="post.title"
+                class="mt-14 border-t border-[var(--site-line)] pt-6"
             />
         </article>
     </PublicLayout>

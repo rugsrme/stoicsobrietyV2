@@ -5,11 +5,12 @@ import Heading from '@/components/Heading.vue';
 import PostForm from '@/components/PostForm.vue';
 import { postNoun } from '@/lib/posts';
 import { create, index } from '@/routes/admin/posts';
-import type { PostCategory, PostCategoryOption } from '@/types';
+import type { PostCategory, PostCategoryOption, SocialNetworks } from '@/types';
 
 const props = defineProps<{
     categories: PostCategoryOption[];
     category: PostCategory;
+    social: SocialNetworks;
 }>();
 
 defineOptions({
@@ -32,5 +33,9 @@ const title = computed(() => `New ${postNoun(props.category)}`);
         description="Write it here, or paste it in from Facebook"
     />
 
-    <PostForm :categories="categories" :initial-category="category" />
+    <PostForm
+        :categories="categories"
+        :initial-category="category"
+        :social="social"
+    />
 </template>

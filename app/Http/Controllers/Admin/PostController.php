@@ -6,7 +6,9 @@ use App\Enums\PostCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePostRequest;
 use App\Http\Requests\Admin\UpdatePostRequest;
+use App\Jobs\SharePostToSocial;
 use App\Models\Post;
+use App\Support\MetaPublisher;
 use App\Support\PostHtml;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -34,10 +36,11 @@ class PostController extends Controller
         ]);
     }
 
-    public function create(Request $request): Response
+    public function create(Request $request, MetaPublisher $meta): Response
     {
         return Inertia::render('admin/posts/Create', [
             'categories' => PostCategory::options(),
+            'social' => $this->socialNetworks($meta),
             'category' => (PostCategory::tryFrom((string) $request->query('category')) ?? PostCategory::Reflection)->value,
         ]);
     }
@@ -49,15 +52,17 @@ class PostController extends Controller
         $this->fill($post, $request);
         $post->fill(['published_at' => $request->boolean('published') ? now() : null]);
         $post->save();
+        $this->share($post, $request);
 
         return to_route('admin.posts.index', ['category' => $post->category->value]);
     }
 
-    public function edit(Post $post): Response
+    public function edit(Post $post, MetaPublisher $meta): Response
     {
         return Inertia::render('admin/posts/Edit', [
-            'post' => $post,
+            'post' => $post->makeVisible(['facebook_post_id', 'instagram_media_id', 'social_share_error']),
             'categories' => PostCategory::options(),
+            'social' => $this->socialNetworks($meta),
         ]);
     }
 
@@ -66,6 +71,7 @@ class PostController extends Controller
         $this->fill($post, $request);
         $post->fill(['published_at' => $request->boolean('published') ? ($post->published_at ?? now()) : null]);
         $post->save();
+        $this->share($post, $request);
 
         return to_route('admin.posts.index', ['category' => $post->category->value]);
     }
@@ -125,6 +131,33 @@ class PostController extends Controller
             $post->cover_image_path = $request->hasFile('cover_image')
                 ? $this->storeImage($request->file('cover_image'), 'posts/covers')
                 : null;
+        }
+    }
+
+    /**
+     * Which networks are set up for automatic sharing.
+     *
+     * @return array{facebook: bool, instagram: bool}
+     */
+    private function socialNetworks(MetaPublisher $meta): array
+    {
+        return [
+            'facebook' => $meta->facebookEnabled(),
+            'instagram' => $meta->instagramEnabled(),
+        ];
+    }
+
+    /**
+     * Share a published reflection or review to the networks ticked in the
+     * editor, once the editor has its response.
+     */
+    private function share(Post $post, StorePostRequest|UpdatePostRequest $request): void
+    {
+        $facebook = $request->boolean('share_facebook') && ! $post->facebook_post_id;
+        $instagram = $request->boolean('share_instagram') && ! $post->instagram_media_id;
+
+        if ($post->isPublished() && $post->category->isPublic() && ($facebook || $instagram)) {
+            SharePostToSocial::dispatchAfterResponse($post, $facebook, $instagram);
         }
     }
 

@@ -30,6 +30,9 @@ use Illuminate\Support\Facades\Storage;
  * @property array<int, array{label: string, url: string}>|null $affiliate_links
  * @property Carbon|null $published_at
  * @property bool $is_featured
+ * @property string|null $facebook_post_id
+ * @property string|null $instagram_media_id
+ * @property string|null $social_share_error
  */
 class Post extends Model
 {
@@ -40,6 +43,13 @@ class Post extends Model
      * @var list<string>
      */
     protected $appends = ['cover_image_url'];
+
+    /**
+     * Social sharing status is only for the editor.
+     *
+     * @var list<string>
+     */
+    protected $hidden = ['facebook_post_id', 'instagram_media_id', 'social_share_error'];
 
     protected $fillable = [
         'author_id',
@@ -97,6 +107,56 @@ class Post extends Model
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * The post's public address, for sharing.
+     */
+    public function publicUrl(): string
+    {
+        return route($this->category->showRoute(), $this);
+    }
+
+    /**
+     * The text above the link card on Facebook. The card itself shows the
+     * title, description and image from the page's Open Graph tags.
+     */
+    public function facebookMessage(): string
+    {
+        return $this->category === PostCategory::BookReview
+            ? trim("New book review: {$this->reviewedBookLine()}\n\n{$this->summary}")
+            : $this->summary;
+    }
+
+    /**
+     * Instagram captions can't hold clickable links, so the address is
+     * spelled out for readers to find.
+     */
+    public function instagramCaption(): string
+    {
+        $heading = $this->category === PostCategory::BookReview
+            ? "Book review: {$this->reviewedBookLine()}"
+            : $this->title;
+
+        $noun = $this->category === PostCategory::BookReview ? 'review' : 'reflection';
+        $address = preg_replace('#^https?://(www\.)?#', '', $this->publicUrl());
+
+        return mb_substr("{$heading}\n\n{$this->summary}\n\nRead the full {$noun} at {$address}", 0, 2200);
+    }
+
+    private function reviewedBookLine(): string
+    {
+        $line = $this->reviewed_book_title ?: $this->title;
+
+        if ($this->reviewed_book_author) {
+            $line .= " by {$this->reviewed_book_author}";
+        }
+
+        if ($this->rating) {
+            $line .= ' '.str_repeat('★', $this->rating);
+        }
+
+        return $line;
     }
 
     public function isPublished(): bool
