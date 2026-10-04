@@ -39,6 +39,7 @@
         @php($preview = $linkPreview ?? [])
         <meta property="og:site_name" content="{{ config('app.name') }}">
         <meta property="og:type" content="{{ $preview['type'] ?? 'website' }}">
+        <link rel="canonical" href="{{ url()->current() }}">
         <meta property="og:url" content="{{ url()->current() }}">
         <meta property="og:title" content="{{ $preview['title'] ?? config('app.name') }}">
         @isset($preview['description'])

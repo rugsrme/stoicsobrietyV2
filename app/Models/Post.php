@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -82,6 +83,25 @@ class Post extends Model
     }
 
     /**
+     * Remember the old slug whenever it changes, so links already shared
+     * keep working.
+     */
+    protected static function booted(): void
+    {
+        static::saved(function (self $post) {
+            // A slug now in use by a live post no longer needs redirecting.
+            PostSlugRedirect::where('slug', $post->slug)->delete();
+
+            if (! $post->wasRecentlyCreated && $post->wasChanged('slug')) {
+                PostSlugRedirect::updateOrCreate(
+                    ['slug' => $post->getOriginal('slug')],
+                    ['post_id' => $post->id],
+                );
+            }
+        });
+    }
+
+    /**
      * The excerpt, or the opening of the body when no excerpt was written.
      *
      * @return Attribute<string, never>
@@ -107,6 +127,22 @@ class Post extends Model
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * @return HasMany<PostSlugRedirect, $this>
+     */
+    public function slugRedirects()
+    {
+        return $this->hasMany(PostSlugRedirect::class);
+    }
+
+    /**
+     * The post that used to have this slug, if any.
+     */
+    public static function findByPreviousSlug(string $slug): ?self
+    {
+        return PostSlugRedirect::where('slug', $slug)->first()?->post;
     }
 
     /**

@@ -13,23 +13,37 @@ use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\ReflectionController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SampleController;
+use App\Models\Post;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// A post whose slug was changed: send old links and shares to its current
+// address. Private and unpublished posts still 404.
+$followRenamedPost = function (Request $request) {
+    $post = Post::findByPreviousSlug((string) $request->route('post'));
+
+    abort_unless($post?->isPublished() && $post->category->isPublic(), 404);
+
+    return redirect($post->publicUrl(), 301);
+};
 
 Route::get('books', [BookController::class, 'index'])->name('books.index');
 Route::get('books/{book:slug}', [BookController::class, 'show'])->name('books.show');
 Route::get('books/{book:slug}/sample', [BookController::class, 'sample'])->name('books.sample');
 
 Route::get('reflections', [ReflectionController::class, 'index'])->name('reflections.index');
-Route::get('reflections/{post:slug}', [ReflectionController::class, 'show'])->name('reflections.show');
+Route::get('reflections/{post:slug}', [ReflectionController::class, 'show'])->name('reflections.show')
+    ->missing($followRenamedPost);
 
 // The section used to be called the blog; keep old links and shares working.
 Route::permanentRedirect('blog', '/reflections');
 Route::get('blog/{slug}', fn (string $slug) => redirect()->route('reflections.show', $slug, 301));
 
 Route::get('reviews', [ReviewController::class, 'index'])->name('reviews.index');
-Route::get('reviews/{post:slug}', [ReviewController::class, 'show'])->name('reviews.show');
+Route::get('reviews/{post:slug}', [ReviewController::class, 'show'])->name('reviews.show')
+    ->missing($followRenamedPost);
 
 Route::get('read', [SampleController::class, 'index'])->name('sample.index');
 Route::get('read/{chapter}', [SampleController::class, 'chapter'])->name('sample.chapter');

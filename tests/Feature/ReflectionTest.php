@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PostCategory;
 use App\Models\Post;
 
 test('only published posts are listed', function () {
@@ -78,4 +79,73 @@ test('old blog links redirect to reflections', function () {
     $this->get('/blog/'.$post->slug)
         ->assertRedirect(route('reflections.show', $post))
         ->assertStatus(301);
+});
+
+test('a post\'s old slug redirects to its new one', function () {
+    $post = Post::factory()->create(['slug' => 'old-slug', 'published_at' => now()->subDay()]);
+
+    $post->update(['slug' => 'new-slug']);
+
+    $this->get('/reflections/old-slug')
+        ->assertMovedPermanently()
+        ->assertRedirect(route('reflections.show', 'new-slug'));
+});
+
+test('every earlier slug keeps redirecting after several renames', function () {
+    $post = Post::factory()->create(['slug' => 'first', 'published_at' => now()->subDay()]);
+
+    $post->update(['slug' => 'second']);
+    $post->update(['slug' => 'third']);
+
+    $this->get('/reflections/first')->assertRedirect(route('reflections.show', 'third'));
+    $this->get('/reflections/second')->assertRedirect(route('reflections.show', 'third'));
+});
+
+test('renaming a post back to an old slug drops that redirect', function () {
+    $post = Post::factory()->create(['slug' => 'original', 'published_at' => now()->subDay()]);
+
+    $post->update(['slug' => 'renamed']);
+    $post->update(['slug' => 'original']);
+
+    $this->get('/reflections/original')->assertOk();
+    $this->get('/reflections/renamed')->assertRedirect(route('reflections.show', 'original'));
+});
+
+test('an old slug follows the post into another section', function () {
+    $post = Post::factory()->create(['slug' => 'old-slug', 'published_at' => now()->subDay()]);
+
+    $post->update(['slug' => 'new-slug', 'category' => PostCategory::BookReview]);
+
+    $this->get('/reflections/old-slug')->assertRedirect(route('reviews.show', 'new-slug'));
+});
+
+test('an old slug of an unpublished or private post returns 404', function () {
+    $unpublished = Post::factory()->create(['slug' => 'draft-old', 'published_at' => now()->subDay()]);
+    $unpublished->update(['slug' => 'draft-new', 'published_at' => null]);
+
+    $journal = Post::factory()->create(['slug' => 'journal-old', 'published_at' => now()->subDay()]);
+    $journal->update(['slug' => 'journal-new', 'category' => PostCategory::Journal]);
+
+    $this->get('/reflections/draft-old')->assertNotFound();
+    $this->get('/reflections/journal-old')->assertNotFound();
+});
+
+test('a deleted post\'s old slugs return 404', function () {
+    $post = Post::factory()->create(['slug' => 'old-slug', 'published_at' => now()->subDay()]);
+    $post->update(['slug' => 'new-slug']);
+
+    $post->delete();
+
+    $this->get('/reflections/old-slug')->assertNotFound();
+});
+
+test('facebook click ids are stripped from shared links', function () {
+    $post = Post::factory()->create(['slug' => 'shared', 'published_at' => now()->subDay()]);
+
+    $this->get('/reflections/shared?fbclid=IwZXh0bgNhZW0')
+        ->assertMovedPermanently()
+        ->assertRedirect('/reflections/shared');
+
+    $this->get('/reflections?page=2&fbclid=IwZXh0bgNhZW0')
+        ->assertRedirect('/reflections?page=2');
 });
